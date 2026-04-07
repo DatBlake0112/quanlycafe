@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Inter:wght@400;700&display=swap');
+
+/* Reset cơ bản */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #362e2b; /* Để nền tối đồng bộ */
+}
+
+.container {
+    display: flex;
+    min-height: 100vh; /* Quan trọng: Cho phép giãn chiều cao khi zoom */
+    width: 100%;
+}
+
+/* Phần bên trái: Ảnh nền */
+.left {
+    flex: 1.2;
+    background: url("/cf.png") no-repeat center;
+    background-size: cover;
+}
+
+/* Phần bên phải: Form */
+.right {
+    flex: 0.8;
+    background: #362e2b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem; /* Sử dụng rem để co giãn theo font hệ thống */
+}
+
+/* FORM BOX: Cố định độ rộng tối đa để không bị "bè" khi màn hình quá to */
+.form-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 1rem;
+}
+
+/* HEADER & LOGO: Dùng tỉ lệ tương đối */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.header h1 {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.logo {
+    width: clamp(60px, 8vw, 90px);
+    aspect-ratio: 1 / 1;
+
+    border-radius: 50%;
+    background: #c5b5a7;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 1px solid #9c8b7e;
+}
+
+.logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+input, button {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.8rem;
+    border: none;
+    font-size: 1rem;
+}
+
+input {
+    background: #c5b5a7;
+    color: #3b2f2f;
+    outline: none;
+}
+
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+button {
+    cursor: pointer;
+    font-weight: 700;
+    background: #c5b5a7;
+    transition: 0.3s;
+}
+
+.link {
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: bold;
+    color: #74b9ff;
+    margin-left: 5px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .left {
+        display: none;
+    }
+
+    .right {
+        flex: 1;
+        padding: 3rem 1rem;
+    }
+}
+.password-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper .input-forgot {
+    width: 100%;
+    padding-right: 40px;
+}
+
+.eye-toggle {
+    position: absolute;
+    right: 15px;
+    cursor: pointer;
+    font-size: 18px;
+    user-select: none;
+    color: #666;
+}
+
+.eye-toggle:hover {
+    color: #000;
+}

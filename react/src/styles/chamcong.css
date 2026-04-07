@@ -1,0 +1,137 @@
+.attendance-layout {
+    display: flex;
+    height: 100vh;
+    background: #f8f9fc;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.left-panel {
+    flex: 2;
+    background: white;
+    padding: 40px;
+    border-right: 1px solid #e3e6f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.right-panel {
+    flex: 1;
+    min-width: 400px; /* Thêm để tránh ép vỡ đồng hồ */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    padding: 20px;
+}
+
+/* --- PHẦN LỊCH --- */
+.header-box { text-align: center; margin-bottom: 20px; }
+.header-box h2 { color: #4e73df; margin-bottom: 5px; }
+
+.calendar-box {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 15px;
+    max-width: 500px;
+    margin: 10px auto;
+}
+
+.dow {
+    font-weight: bold;
+    color: #4e73df;
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.day {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid #eaecf4;
+    color: #5a5c69;
+    transition: 0.2s;
+}
+
+.day.active {
+    background: #1cc88a;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 10px rgba(28, 200, 138, 0.4);
+    font-weight: bold;
+}
+
+/* --- PHẦN ĐỒNG HỒ & THÔNG TIN --- */
+.user-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #f8f9fc;
+    padding: 12px 25px;
+    border-radius: 50px;
+    margin-bottom: 40px;
+    border: 1px solid #e3e6f0;
+}
+
+.avatar { font-size: 2rem; }
+.info h3 { margin: 0; font-size: 1.1rem; color: #333; }
+.info p { margin: 0; font-size: 0.85rem; color: #858796; }
+
+.timer-box {
+    text-align: center;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.digital-clock {
+    font-size: 4rem; /* Đã hạ từ 5rem xuống 4rem để an toàn */
+    font-family: 'Courier New', monospace;
+    color: #2e3440;
+    margin: 0;
+    letter-spacing: 2px;
+    white-space: nowrap; /* Ép không xuống dòng */
+}
+
+.status-label {
+    margin-top: 5px;
+    font-weight: bold;
+    color: #858796;
+    letter-spacing: 1px;
+}
+
+/* --- PHẦN NÚT BẤM --- */
+.action-btn {
+    width: 280px;
+    padding: 18px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    color: white;
+    transition: 0.3s;
+    text-transform: uppercase;
+}
+
+.start {
+    background: #1cc88a;
+    box-shadow: 0 5px 15px rgba(28, 200, 138, 0.3);
+}
+
+.stop {
+    background: #e74a3b;
+    box-shadow: 0 5px 15px rgba(231, 74, 59, 0.3);
+}
+
+.action-btn:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+.action-btn:active {
+    transform: scale(0.98);
+}
