@@ -1,267 +1,330 @@
-/* Container chính - Cố định chiều cao màn hình để không cuộn cả trang */
+/* --- CONTAINER CHÍNH & LAYOUT --- */
 .salary-wrapper {
     padding: 20px;
-    background-color: #f8f9fa;
+    background-color: #f4f7f6;
     height: 100vh;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    overflow: hidden; /* Chặn cuộn toàn trang */
+    overflow: hidden;
 }
 
-/* Thẻ thống kê giữ nguyên chiều cao */
+/* --- THẺ THỐNG KÊ (STATS) --- */
 .stats-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     margin-bottom: 20px;
-    flex-shrink: 0; /* Không cho phép co lại */
+    flex-shrink: 0;
 }
 
-/* Khu vực nội dung trắng bao quanh bảng */
+.stat-card {
+    padding: 20px;
+    border-radius: 12px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.stat-card span { font-size: 13px; opacity: 0.85; text-transform: uppercase; }
+.stat-card h3 { font-size: 22px; margin-top: 8px; font-weight: 700; }
+
+.blue { background: linear-gradient(135deg, #4db6ac, #00897b); }
+.orange { background: linear-gradient(135deg, #f0ad4e, #ec971f); }
+.red { background: linear-gradient(135deg, #d9534f, #c9302c); }
+.gray { background: linear-gradient(135deg, #90a4ae, #607d8b); }
+
+/* --- KHU VỰC NỘI DUNG TRẮNG --- */
 .salary-content {
     background: white;
-    padding: 20px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    flex-grow: 1; /* Tự động chiếm phần diện tích còn lại */
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Quan trọng: Để div con có thể scroll */
+    overflow: hidden;
 }
 
+/* --- HEADER ACTIONS (SEARCH & BUTTONS) --- */
 .header-actions {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
     flex-shrink: 0;
 }
-/* Container chứa cả Select và Search */
+
 .filter-group {
     display: flex;
     align-items: center;
-    gap: 15px; /* Khoảng cách giữa các phần tử */
-    background: #ffffff;
-    padding: 5px 15px;
-    border-radius: 30px; /* Bo tròn cả cụm */
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Đổ bóng nhẹ cho sang */
+    gap: 12px;
+    background: #f9f9f9;
+    padding: 6px 18px;
+    border-radius: 50px;
+    border: 1px solid #eee;
 }
 
-/* Tùy chỉnh ô chọn tháng */
 .filter-group select {
     border: none;
-    outline: none;
     background: transparent;
-    font-size: 14px;
     font-weight: 600;
-    color: #444;
-    cursor: pointer;
-    padding: 5px;
-    border-right: 2px solid #eee; /* Vạch ngăn cách nhẹ giữa Select và Search */
-    padding-right: 15px;
-}
-
-/* Tùy chỉnh ô tìm kiếm */
-.search-input {
-    border: none !important;
+    color: #333;
     outline: none;
-    padding: 8px 10px;
-    width: 220px;
-    font-size: 14px;
+    cursor: pointer;
+    border-right: 1px solid #ddd;
+    padding-right: 10px;
+}
+
+.search-input {
+    border: none;
     background: transparent;
-    transition: width 0.3s ease;
-}
-
-/* Hiệu ứng khi click vào ô tìm kiếm thì nó dài ra một chút */
-.search-input:focus {
-    width: 280px;
-}
-
-
-.filter-group::before {
-    content: '🔍';
+    outline: none;
+    padding: 8px;
+    width: 200px;
     font-size: 14px;
-    color: #888;
-    order: 2;
-    margin-right: -5px;
+    color: black;
 }
 
-/* --- PHẦN QUAN TRỌNG ĐỂ SCROLL --- */
+/* --- BẢNG DỮ LIỆU --- */
+/* --- BẢNG DỮ LIỆU (CẬP NHẬT ĐỂ HÀNG CAO HƠN) --- */
 .table-scroll {
     flex-grow: 1;
-    overflow-y: auto; /* Cuộn dọc */
-    overflow-x: auto; /* Cuộn ngang nếu màn hình nhỏ */
-    border: 1px solid #eee;
+    overflow-y: auto;
+    border-radius: 12px; /* Bo góc mượt hơn */
+    border: 1px solid #f0f0f0;
+    margin-top: 10px;
 }
 
 .styled-table {
     width: 100%;
-    border-collapse: separate; /* Dùng separate để sticky header hoạt động chuẩn */
+    border-collapse: collapse; /* Đổi sang collapse để padding chuẩn hơn */
     border-spacing: 0;
-    font-size: 14px;
 }
 
-/* Tiêu đề bảng cố định khi cuộn */
 .styled-table thead th {
     position: sticky;
     top: 0;
-    z-index: 2;
-    background: #f5f5f5;
-    padding: 12px;
-    border-bottom: 2px solid #ddd;
+    z-index: 10;
+    background: #fcfcfc;
+    padding: 18px 15px; /* Tăng padding trên dưới cho header */
+    border-bottom: 2px solid #eee;
+    color: #888;
+    font-size: 13px;
+    text-transform: uppercase;
     text-align: center;
 }
 
 .styled-table td {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
+    padding: 20px 15px; /* TĂNG PADDING NÀY: Giúp hàng cao và thoáng hơn */
+    border-bottom: 1px solid #f5f5f5;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 15px; /* Tăng nhẹ size chữ cho dễ đọc */
+    color: #444;
 }
 
-/* Các thuộc tính khác giữ nguyên */
-.stat-card { padding: 20px; border-radius: 10px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-.stat-card span { font-size: 14px; opacity: 0.9; }
-.stat-card h3 { font-size: 24px; margin-top: 10px; }
-.blue { background: #4db6ac; }
-.orange { background: #f0ad4e; }
-.red { background: #d9534f; }
-.gray { background: #bcbab8; }
+/* Hiệu ứng hover giúp hàng nổi bật */
+.styled-table tbody tr:hover {
+    background-color: #fafafa;
+    transition: background 0.2s;
+}
 
-.status-badge { padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold;}
+.styled-table td:nth-child(2) {
+    text-align: left;
+    font-weight: 500;
+}
+.text-bold { font-weight: 700; color: #333; }
+.text-primary { color: #00897b; font-weight: 800; }
+
+/* Badge trạng thái */
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
 .paid { background: #e8f5e9; color: #2e7d32; }
 .unpaid { background: #fff3e0; color: #ef6c00; }
 
-.btn-primary { background: #00bcd4; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-.btn-secondary { background: #4db6ac; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin-left: 10px; cursor: pointer; }
-/* Modal Styles */
+/* --- NÚT BẤM HÀNH ĐỘNG --- */
+.btn-primary { background: #00bcd4; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 700; }
+.btn-secondary { background: #78909c; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+
+.action-buttons-group { display: flex; gap: 8px; justify-content: center; }
+
+.btn-action {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-action.detail { background: #eceff1; color: #455a64; }
+.btn-action.detail:disabled { cursor: not-allowed; }
+.btn-action.pay { background: #00acc1; color: white; }
+.btn-action.pay:disabled { background: #e0e0e0; cursor: not-allowed; }
+
+/* --- CSS CHO MODAL MẪU MỚI (CHỈ SỬA PHẦN NÀY) --- */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6); /* Nền tối mờ phía sau */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 9999;
 }
 
-.modal-content {
+.modal-content.large-modal {
     background: white;
-    padding: 25px;
-    border-radius: 12px;
-    width: 450px;
-    max-width: 90%;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    animation: fadeIn 0.3s ease;
+    width: 680px;
+    max-width: 95%;
+    max-height: 90vh;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s ease-out;
 }
 
 .modal-header {
+    padding: 15px 25px;
+    border-bottom: 1px solid #eee;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #333;
+}
+
+.modal-body {
+    padding: 20px 25px;
+    overflow-y: auto;
+}
+
+/* Định dạng Fieldset (Các khung [TÓM TẮT], [DANH SÁCH]...) */
+.salary-fieldset {
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 18px;
     margin-bottom: 20px;
+    background-color: #fff;
 }
 
-.modal-header h2 { margin: 0; font-size: 20px; color: #333; }
+.salary-fieldset legend {
+    font-weight: 800;
+    color: #607d8b;
+    padding: 0 12px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
 
-.close-btn {
-    background: none;
+.form-row {
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    color: #444;
+    background: white;
+}
+
+/* Bảng thưởng/phạt chi tiết trong modal */
+.adjustment-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+
+.adjustment-table th {
+    background-color: #f8f9fa;
+    color: #666;
+    font-size: 13px;
+    padding: 10px;
+    border: 1px solid #eee;
+}
+
+.adjustment-table td {
+    padding: 12px;
+    border: 1px solid #eee;
+    font-size: 14px;
+}
+
+/* Tổng điều chỉnh & Thực nhận cuối cùng */
+.total-adjustment {
+    text-align: right;
+    font-weight: 700;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.final-payment {
+    text-align: center;
+    background-color: #f1f8e9; /* Màu xanh lá nhạt */
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px dashed #a5d6a7;
+    margin: 10px 0;
+}
+
+.final-payment h3 {
+    margin: 8px 0 0 0;
+    font-size: 1.6rem;
+    color: #2e7d32;
+    font-weight: 900;
+}
+
+/* Input trong khung Thêm điều chỉnh nhanh */
+.salary-fieldset select,
+.salary-fieldset input,
+.salary-fieldset textarea {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 14px;
+    outline: none;
+}
+
+.salary-fieldset textarea {
+    width: 100%;
+    height: 60px;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+
+.btn-update-salary {
+    background-color: #00897b;
+    color: white;
     border: none;
-    font-size: 28px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: 700;
     cursor: pointer;
-    color: #888;
+    margin-top: 10px;
+    transition: 0.3s;
 }
 
-.modal-body p {
-    margin: 12px 0;
-    font-size: 15px;
-    color: #555;
-    border-bottom: 1px dashed #f0f0f0;
-    padding-bottom: 5px;
+.btn-update-salary:hover {
+    background-color: #00695c;
 }
 
 .modal-footer {
-    margin-top: 20px;
-    text-align: right;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-/* Sửa lại header actions để các nhóm nút nằm đúng vị trí */
-.header-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    flex-shrink: 0;
-}
-
-.button-group {
-    display: flex;
-    gap: 10px; /* Khoảng cách giữa nút Tính lương và Xuất báo cáo */
-}
-
-/* Group cho các nút trong bảng */
-.action-buttons-group {
+    padding: 15px;
+    border-top: 1px solid #eee;
     display: flex;
     justify-content: center;
-    gap: 8px;
 }
 
-/* Style mới cho nút hành động thay vì dùng action-link (gạch chân) */
-.btn-action {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-action.detail {
-    background-color: #f0f0f0;
-    color: #555;
-}
-
-.btn-action.detail:hover {
-    background-color: #e0e0e0;
-}
-
-.btn-action.pay {
-    background-color: #00bcd4;
-    color: white;
-}
-
-.btn-action.pay:hover {
-    background-color: #0097a7;
-}
-
-.btn-action.pay:disabled {
-    background-color: #e0e0e0;
-    color: #a0a0a0;
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-/* Căn giữa text trong các cột bảng cho cân đối */
-.styled-table td {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    text-align: center; /* Căn giữa nội dung các cột */
-}
-
-/* Cột tên NV nên căn trái để dễ đọc */
-.styled-table td:nth-child(2) {
-    text-align: left;
-}
-
-.styled-table thead th {
-    text-align: center;
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }

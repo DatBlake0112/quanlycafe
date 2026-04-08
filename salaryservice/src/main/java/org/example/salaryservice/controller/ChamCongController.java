@@ -1,6 +1,7 @@
 package org.example.salaryservice.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.salaryservice.dto.ChamCongSummary;
 import org.example.salaryservice.service.ChamCongService;
 import org.example.salaryservice.repository.ChamCongRepository;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/cham-cong")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true", allowedHeaders = "*")
 public class ChamCongController {
 
     private final ChamCongService chamCongService;
@@ -56,8 +56,9 @@ public class ChamCongController {
             @RequestParam int month,
             @RequestParam int year) {
         try {
-            List<Integer> days = chamCongRepository.findActiveDays(maNV, month, year);
-            return ResponseEntity.ok(days);
+            // Gọi hàm mới trong Repository
+            List<Map<String, Object>> daysData = chamCongRepository.findActiveDaysWithHours(maNV, month, year);
+            return ResponseEntity.ok(daysData);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Lỗi lấy dữ liệu lịch: " + e.getMessage());
         }

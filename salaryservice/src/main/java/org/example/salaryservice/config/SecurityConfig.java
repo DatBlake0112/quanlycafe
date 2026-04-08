@@ -4,6 +4,7 @@ import org.example.salaryservice.security.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,6 +16,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -27,7 +29,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(Customizer.withDefaults()) // Vẫn giữ dòng này để nó nhận WebConfig ở trên
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable) // Tắt cái này để hết lỗi 302
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -35,6 +37,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Mở cửa hoàn toàn cho các API này để test trước
                         .requestMatchers("/api/cham-cong/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/salary/**").permitAll()
                         .anyRequest().authenticated()
                 );
@@ -43,6 +46,23 @@ public class SecurityConfig {
         return http.build();
     }
 
-// XÓA BỎ cái Bean CorsConfigurationSource cũ (nếu có) để dùng WebConfig cho thống nhất
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // Sử dụng Pattern thay cho dấu sao (*)
+        // Pattern này chấp nhận mọi port chạy trên localhost (5173, 3000,...)
+        configuration.setAllowedOriginPatterns(List.of("http://localhost:[*]"));
+
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept"));
+
+        // Khi cái này là true, AllowedOrigins tuyệt đối không được là "*"
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
 }

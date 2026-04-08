@@ -26,11 +26,8 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Hỗ trợ Pre-flight request cho CORS
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            response.setStatus(HttpServletResponse.SC_OK);
-            return;
-        }
+        // XÓA ĐOẠN CHECK OPTIONS THỦ CÔNG Ở ĐÂY.
+        // Spring Security's CorsFilter sẽ lo việc này dựa trên cấu hình trong SecurityConfig.
 
         final String authHeader = request.getHeader("Authorization");
 
@@ -45,7 +42,8 @@ public class JwtFilter extends OncePerRequestFilter {
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 if (jwtService.isTokenValid(token, username)) {
                     String role = jwtService.extractRole(token);
-                    SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + (role != null ? role.toUpperCase() : "USER"));
+                    SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" +
+                            (role != null ? role.toUpperCase() : "USER"));
 
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             username, null, Collections.singletonList(authority));
@@ -54,7 +52,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
-            System.err.println("JWT Error: " + e.getMessage());
+            // Không nên in ra err, chỉ cần để filter đi tiếp, Security sẽ chặn ở tầng cuối nếu không có Auth
+            logger.error("JWT validation failed: " + e.getMessage());
         }
         filterChain.doFilter(request, response);
     }

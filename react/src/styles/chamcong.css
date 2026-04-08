@@ -1,180 +1,74 @@
-/* Tổng thể */
-.attendance-layout {
+.cc-container {
     display: flex;
-    height: 100vh;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    padding: 20px;
-    box-sizing: border-box;
     gap: 20px;
+    padding: 25px;
+    background: #f0f2f5;
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    justify-content: center;
 }
 
-/* Panel trái - Lịch làm việc */
-.left-panel {
-    flex: 1.5;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* Panel phải - Đồng hồ */
-.right-panel {
-    flex: 1;
+.cc-card {
     background: white;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.cc-left { flex: 1.5; max-width: 500px; }
+.cc-right { flex: 1; max-width: 350px; display: flex; flex-direction: column; align-items: center; }
+
+.cc-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+.cc-title { font-size: 1.2rem; margin: 0; color: #1a1a1a; }
+.cc-badge { background: #e8f0fe; color: #1a73e8; padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; margin-top: 5px; display: inline-block;}
+
+.cc-calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.cc-dow { text-align: center; color: #70757a; font-size: 0.75rem; font-weight: bold; padding-bottom: 5px; }
+
+.cc-day {
+    aspect-ratio: 1;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    position: relative;
-    overflow: hidden;
-}
-
-/* --- PHẦN LỌC LỊCH --- */
-.header-box { text-align: center; margin-bottom: 20px; }
-.header-box h2 { color: #2c3e50; font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; }
-
-.calendar-filter {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-    justify-content: center;
-}
-
-.calendar-filter select {
-    padding: 8px 15px;
     border-radius: 10px;
-    border: 1px solid #e3e6f0;
-    background: #f8f9fc;
-    color: #4e73df;
-    font-weight: 600;
-    outline: none;
     cursor: pointer;
-    transition: all 0.3s;
-}
-
-.calendar-filter select:hover {
-    border-color: #4e73df;
-    background: #fff;
-}
-
-/* --- GRID LỊCH --- */
-.calendar-box {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 12px;
-    width: 100%;
-    max-width: 450px;
-    margin-top: 30px;
-    min-height: 320px;
-    align-content: start;
-}
-
-.dow {
-    font-weight: 700;
-    color: #a0aec0;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    text-align: center;
-    padding-bottom: 10px;
-}
-
-.day {
-    aspect-ratio: 1 / 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    background: #f7fafc;
-    color: #4a5568;
     font-weight: 500;
-    transition: all 0.3s ease;
+    position: relative;
+    background: #f8f9fa;
+    transition: 0.2s;
 }
 
-.day.active {
-    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-    color: white;
-    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
-    transform: translateY(-2px);
-    font-weight: bold;
-}
+.cc-day:hover { background: #e8eaed; }
+.cc-day.is-active { background: #34a853; color: white; }
+.cc-day.is-selected { border: 2px solid #1a73e8; background: #e8f0fe; color: #1a73e8; }
+.cc-day.is-active.is-selected { background: #1e8e3e; color: white; }
 
-/* --- ĐỒNG HỒ & THÔNG TIN --- */
-.user-card {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background: #f1f4f9;
-    padding: 15px 25px;
-    border-radius: 15px;
-    width: 80%;
-    margin-bottom: 50px;
-    border: 1px solid #e3e6f0;
-}
+.cc-dot { position: absolute; bottom: 4px; width: 4px; height: 4px; background: currentColor; border-radius: 50%; }
 
-.avatar { font-size: 2rem; }
+.cc-detail { margin-top: 20px; min-height: 50px; }
+.cc-detail-box { background: #f1f3f4; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+.cc-hint { text-align: center; color: #70757a; font-style: italic; font-size: 0.9rem; }
 
-.digital-clock {
-    font-size: 4.5rem;
-    font-weight: 800;
-    color: #1a202c;
-    font-family: 'Courier New', monospace;
-    font-variant-numeric: tabular-nums;
-    margin: 0;
-    text-shadow: 2px 2px 0px #edf2f7;
-}
+.cc-user { display: flex; align-items: center; gap: 12px; width: 100%; padding-bottom: 20px; border-bottom: 1px solid #eee; margin-bottom: 30px;}
+.cc-avatar { font-size: 1.5rem; background: #eee; padding: 10px; border-radius: 50%; }
+.cc-user h4 { margin: 0; color: #202124; }
+.cc-user p { margin: 0; font-size: 0.8rem; color: #70757a; }
 
-.status-label {
-    margin-top: 10px;
-    font-size: 0.9rem;
-    font-weight: bold;
-    color: #718096;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
+.cc-clock { font-size: 3.5rem; font-weight: bold; font-family: monospace; color: #202124; margin-bottom: 10px; }
+.cc-status { font-weight: bold; font-size: 0.85rem; color: #d93025; margin-bottom: 40px;}
+.cc-status.working { color: #1e8e3e; }
 
-/* --- NÚT BẤM --- */
-.action-btn {
-    width: 80%;
-    max-width: 300px;
-    padding: 20px;
-    font-size: 1.3rem;
-    font-weight: bold;
-    border-radius: 15px;
+.cc-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
     border: none;
+    font-weight: bold;
+    font-size: 1rem;
     cursor: pointer;
     color: white;
-    text-transform: uppercase;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: 0.3s;
 }
-
-.start {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
-}
-
-.stop {
-    background: linear-gradient(135deg, #f83600 0%, #f9d423 100%);
-    box-shadow: 0 10px 20px rgba(248, 54, 0, 0.3);
-}
-
-.action-btn:hover {
-    transform: translateY(-5px) scale(1.02);
-    filter: brightness(1.1);
-}
-
-.error-msg {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    font-size: 1.5rem;
-    color: #e74a3b;
-    font-weight: bold;
-}
+.btn-start { background: #1a73e8; }
+.btn-stop { background: #d93025; }
+.cc-btn:hover { opacity: 0.9; transform: translateY(-2px); }

@@ -67,4 +67,9 @@ public class ChamCongService {
         }
         return repo.save(cc);
     }
+
+    public Double getTongGioLamTheoThang(String maNV, int thang, int nam) {
+        Double tong = repo.sumSoGioLamByMonth(maNV, thang, nam);
+        return (tong != null) ? tong : 0.0;
+    }
 }
