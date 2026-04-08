@@ -4,27 +4,24 @@ import org.example.salaryservice.entity.LuongThuong;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
-@Repository
 public interface LuongThuongRepository extends JpaRepository<LuongThuong, String> {
 
-    // Lấy toàn bộ phiếu thưởng/phạt của NV trong tháng (thangNam định dạng "MM/yyyy")
-    List<LuongThuong> findByMaNhanVienAndThangNam(String maNV, String thangNam);
+    List<LuongThuong> findByThangNam(String thangNam);
 
-    // Tính tổng tiền thưởng trong tháng
-    @Query("SELECT SUM(l.soTien) FROM LuongThuong l " +
-            "WHERE l.maNhanVien = :maNV " +
-            "AND l.thangNam = :thangNam " +
-            "AND l.loaiKhoan = 'THUONG'")
-    Double sumBonusByMonth(@Param("maNV") String maNV, @Param("thangNam") String thangNam);
+    @Query("SELECT SUM(l.soTien) FROM LuongThuong l WHERE l.thangNam = :tn AND l.loaiKhoan = 'LUONG'")
+    Double sumTotalSalary(@Param("tn") String thangNam);
 
-    // Tính tổng tiền phạt trong tháng
-    @Query("SELECT SUM(l.soTien) FROM LuongThuong l " +
-            "WHERE l.maNhanVien = :maNV " +
-            "AND l.thangNam = :thangNam " +
-            "AND l.loaiKhoan = 'PHAT'")
-    Double sumPenaltyByMonth(@Param("maNV") String maNV, @Param("thangNam") String thangNam);
+    @Query("SELECT SUM(l.soTien) FROM LuongThuong l WHERE l.thangNam = :tn AND l.loaiKhoan = 'THUONG'")
+    Double sumTotalBonus(@Param("tn") String thangNam);
+
+    @Query("SELECT SUM(l.soTien) FROM LuongThuong l WHERE l.thangNam = :tn AND l.loaiKhoan = 'PHAT'")
+
+    Double sumTotalDeduct(@Param("tn") String thangNam);
+    @Query("SELECT COUNT(DISTINCT c.maNhanVien) FROM ChamCong c " +
+            "WHERE MONTH(c.thoiGianVao) = :month AND YEAR(c.thoiGianVao) = :year " +
+            "AND c.trangThai = 'Hoàn thành' " +
+            "AND c.maChamCong NOT IN (SELECT lt.maChamCong FROM LuongThuong lt WHERE lt.maChamCong IS NOT NULL)")
+    Long countEmployeesNotYetCalculated(@Param("month") int month, @Param("year") int year);
 }

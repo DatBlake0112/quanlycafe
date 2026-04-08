@@ -5,9 +5,44 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Header Layout */
 .dashboard-header {
-    margin-bottom: 40px;
-    text-align: center;
+    display: flex;
+    justify-content: space-between; /* Đẩy tên sang trái, nút sang phải */
+    align-items: center;
+    padding: 20px 40px;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+/* Nút Đăng xuất */
+.logout-button {
+    background-color: #e74c3c; /* Màu đỏ */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #c0392b;
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+.header-left h1 {
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 24px;
+    color: #333;
+}
+
+.header-left p {
+    margin: 5px 0 0;
+    color: #666;
 }
 
 .dashboard-header h1 {

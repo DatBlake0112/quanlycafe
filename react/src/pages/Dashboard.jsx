@@ -6,6 +6,18 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const tenQuanLy = localStorage.getItem('tenNhanVien') || 'Quản lý';
 
+    // Hàm xử lý đăng xuất
+    const handleLogout = () => {
+        if (window.confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+            // 1. Xóa toàn bộ dữ liệu người dùng cũ trong máy
+            localStorage.clear();
+            sessionStorage.clear();
+
+            // 2. Quay về trang login
+            navigate("/");
+        }
+    };
+
     const menuItems = [
         {
             id: 1,
@@ -26,9 +38,9 @@ const Dashboard = () => {
         {
             id: 3,
             title: "Quản lý lương thưởng",
-            icon: "⏱️",
+            icon: "💰", // Sửa icon cho đúng
             description: "Quản lý lương thưởng.",
-            path: "//tinh-luong",
+            path: "/tinh-luong", // Bỏ bớt dấu / bị thừa
             color: "#a6a553"
         }
     ];
@@ -36,8 +48,15 @@ const Dashboard = () => {
     return (
         <div className="dashboard-container">
             <header className="dashboard-header">
-                <h1>Hệ Thống Quản Lý Cafe</h1>
-                <p>Xin chào, <strong>{tenQuanLy}</strong>!</p>
+                <div className="header-left">
+                    <h1>Hệ Thống Quản Lý</h1>
+                    <p>Xin chào, <strong>{tenQuanLy}</strong>!</p>
+                </div>
+
+                {/* NÚT LOGOUT MỚI THÊM VÀO ĐÂY */}
+                <button className="logout-button" onClick={handleLogout}>
+                    Đăng xuất 🚪
+                </button>
             </header>
 
             <div className="dashboard-grid">

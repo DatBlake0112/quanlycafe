@@ -1,137 +1,180 @@
+/* Tổng thể */
 .attendance-layout {
     display: flex;
     height: 100vh;
-    background: #f8f9fc;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 20px;
+    box-sizing: border-box;
+    gap: 20px;
 }
 
+/* Panel trái - Lịch làm việc */
 .left-panel {
-    flex: 2;
-    background: white;
-    padding: 40px;
-    border-right: 1px solid #e3e6f0;
+    flex: 1.5;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
+/* Panel phải - Đồng hồ */
 .right-panel {
     flex: 1;
-    min-width: 400px; /* Thêm để tránh ép vỡ đồng hồ */
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: white;
-    padding: 20px;
+    position: relative;
+    overflow: hidden;
 }
 
-/* --- PHẦN LỊCH --- */
+/* --- PHẦN LỌC LỊCH --- */
 .header-box { text-align: center; margin-bottom: 20px; }
-.header-box h2 { color: #4e73df; margin-bottom: 5px; }
+.header-box h2 { color: #2c3e50; font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; }
 
+.calendar-filter {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: center;
+}
+
+.calendar-filter select {
+    padding: 8px 15px;
+    border-radius: 10px;
+    border: 1px solid #e3e6f0;
+    background: #f8f9fc;
+    color: #4e73df;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.calendar-filter select:hover {
+    border-color: #4e73df;
+    background: #fff;
+}
+
+/* --- GRID LỊCH --- */
 .calendar-box {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 15px;
-    max-width: 500px;
-    margin: 10px auto;
+    gap: 12px;
+    width: 100%;
+    max-width: 450px;
+    margin-top: 30px;
+    min-height: 320px;
+    align-content: start;
 }
 
 .dow {
-    font-weight: bold;
-    color: #4e73df;
+    font-weight: 700;
+    color: #a0aec0;
+    text-transform: uppercase;
+    font-size: 0.8rem;
     text-align: center;
     padding-bottom: 10px;
 }
 
 .day {
-    width: 45px;
-    height: 45px;
+    aspect-ratio: 1 / 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    border: 1px solid #eaecf4;
-    color: #5a5c69;
-    transition: 0.2s;
+    border-radius: 12px;
+    background: #f7fafc;
+    color: #4a5568;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 .day.active {
-    background: #1cc88a;
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
     color: white;
-    border: none;
-    box-shadow: 0 4px 10px rgba(28, 200, 138, 0.4);
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+    transform: translateY(-2px);
     font-weight: bold;
 }
 
-/* --- PHẦN ĐỒNG HỒ & THÔNG TIN --- */
+/* --- ĐỒNG HỒ & THÔNG TIN --- */
 .user-card {
     display: flex;
     align-items: center;
     gap: 15px;
-    background: #f8f9fc;
-    padding: 12px 25px;
-    border-radius: 50px;
-    margin-bottom: 40px;
+    background: #f1f4f9;
+    padding: 15px 25px;
+    border-radius: 15px;
+    width: 80%;
+    margin-bottom: 50px;
     border: 1px solid #e3e6f0;
 }
 
 .avatar { font-size: 2rem; }
-.info h3 { margin: 0; font-size: 1.1rem; color: #333; }
-.info p { margin: 0; font-size: 0.85rem; color: #858796; }
-
-.timer-box {
-    text-align: center;
-    margin-bottom: 40px;
-    width: 100%;
-}
 
 .digital-clock {
-    font-size: 4rem; /* Đã hạ từ 5rem xuống 4rem để an toàn */
+    font-size: 4.5rem;
+    font-weight: 800;
+    color: #1a202c;
     font-family: 'Courier New', monospace;
-    color: #2e3440;
+    font-variant-numeric: tabular-nums;
     margin: 0;
-    letter-spacing: 2px;
-    white-space: nowrap; /* Ép không xuống dòng */
+    text-shadow: 2px 2px 0px #edf2f7;
 }
 
 .status-label {
-    margin-top: 5px;
+    margin-top: 10px;
+    font-size: 0.9rem;
     font-weight: bold;
-    color: #858796;
-    letter-spacing: 1px;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
-/* --- PHẦN NÚT BẤM --- */
+/* --- NÚT BẤM --- */
 .action-btn {
-    width: 280px;
-    padding: 18px;
-    font-size: 1.4rem;
+    width: 80%;
+    max-width: 300px;
+    padding: 20px;
+    font-size: 1.3rem;
     font-weight: bold;
+    border-radius: 15px;
     border: none;
-    border-radius: 12px;
     cursor: pointer;
     color: white;
-    transition: 0.3s;
     text-transform: uppercase;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .start {
-    background: #1cc88a;
-    box-shadow: 0 5px 15px rgba(28, 200, 138, 0.3);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
 }
 
 .stop {
-    background: #e74a3b;
-    box-shadow: 0 5px 15px rgba(231, 74, 59, 0.3);
+    background: linear-gradient(135deg, #f83600 0%, #f9d423 100%);
+    box-shadow: 0 10px 20px rgba(248, 54, 0, 0.3);
 }
 
 .action-btn:hover {
-    transform: scale(1.05);
+    transform: translateY(-5px) scale(1.02);
     filter: brightness(1.1);
 }
 
-.action-btn:active {
-    transform: scale(0.98);
+.error-msg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 1.5rem;
+    color: #e74a3b;
+    font-weight: bold;
 }

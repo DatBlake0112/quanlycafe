@@ -1,155 +1,171 @@
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Inter:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
 
-/* Reset cơ bản */
 * {
-    box-sizing: border-box;
-}
-
-body {
     margin: 0;
     padding: 0;
-    font-family: 'Inter', sans-serif;
-    background-color: #362e2b; /* Để nền tối đồng bộ */
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-.container {
-    display: flex;
-    min-height: 100vh; /* Quan trọng: Cho phép giãn chiều cao khi zoom */
+html, body, #root {
     width: 100%;
+    height: 100vh;
+    overflow: hidden;
 }
 
-/* Phần bên trái: Ảnh nền */
-.left {
-    flex: 1.2;
-    background: url("/cf.png") no-repeat center;
+.portal-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* --- BÊN TRÁI (Hero) --- */
+.portal-hero-section {
+    width: 50%; /* Giảm nhẹ để form Register có thêm không gian */
+    height: 100%;
+    background: url('/cf.png') no-repeat center;
     background-size: cover;
 }
 
-/* Phần bên phải: Form */
-.right {
-    flex: 0.8;
-    background: #362e2b;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem; /* Sử dụng rem để co giãn theo font hệ thống */
-}
-
-/* FORM BOX: Cố định độ rộng tối đa để không bị "bè" khi màn hình quá to */
-.form-box {
-    width: 100%;
-    max-width: 400px;
-    padding: 1rem;
-}
-
-/* HEADER & LOGO: Dùng tỉ lệ tương đối */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    gap: 1rem;
-}
-
-.header h1 {
-    font-family: 'Oswald', sans-serif;
-    font-size: clamp(2rem, 5vw, 3rem);
-    margin: 0;
-    text-transform: uppercase;
-}
-
-.logo {
-    width: clamp(60px, 8vw, 90px);
-    aspect-ratio: 1 / 1;
-
-    border-radius: 50%;
-    background: #c5b5a7;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    flex-shrink: 0;
-    overflow: hidden;
-    border: 1px solid #9c8b7e;
-}
-
-.logo img {
-    width: 100%;
+.hero-overlay {
+    background: linear-gradient(135deg, rgba(45, 36, 30, 0.92) 0%, rgba(85, 68, 56, 0.85) 100%);
     height: 100%;
-    object-fit: cover;
+    padding: 60px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
 }
 
-input, button {
+.hero-content { margin-top: -40px; }
+
+.brand-label {
+    color: #d4a373;
+    font-weight: 700;
+    letter-spacing: 4px;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1.3;
+    color: #fff;
+}
+
+.highlight { color: #d4a373; }
+
+.hero-description p{
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #ffffff;
+    max-width: 450px;
+    margin-top: 20px;
+}
+
+.hero-footer {
+    position: absolute;
+    bottom: 40px;
+    display: flex;
+    gap: 30px;
+    font-size: 0.85rem;
+    color: #f3e9dc;
+    opacity: 0.5;
+}
+
+/* --- BÊN PHẢI (Form) --- */
+.portal-form-section {
+    width: 45%; /* Tăng nhẹ để form rộng rãi hơn */
+    height: 100%;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 50px; /* Giảm padding trên dưới */
+}
+
+/*.top-right-logo {*/
+/*    margin-bottom: 0px; !* Thu hẹp khoảng cách logo *!*/
+/*}*/
+
+/*.top-right-logo img {*/
+/*    height: 100px;*/
+/*    width: auto;*/
+/*}*/
+
+.form-wrapper {
     width: 100%;
-    padding: 0.8rem 1rem;
-    margin-bottom: 0.8rem;
-    border: none;
+    max-width: 420px;
+}
+
+.welcome-text-group {
+    text-align: center;
+    margin-bottom: 20px; /* Thu hẹp lại */
+}
+
+.form-welcome {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+}
+
+/* Ẩn thanh cuộn xấu xí nhưng vẫn cho phép cuộn bằng chuột */
+.input-group-scroll {
+    max-height: 480px; /* Tăng độ cao tối đa để chứa đủ form */
+    overflow-y: auto;
+    padding-right: 5px;
+    margin-bottom: 15px;
+    scrollbar-width: none; /* Cho Firefox */
+    -ms-overflow-style: none;  /* Cho IE/Edge */
+}
+
+.input-group-scroll::-webkit-scrollbar {
+    display: none; /* Ẩn scrollbar hoàn toàn trên Chrome/Safari */
+}
+
+.input-field {
+    margin-bottom: 12px; /* Giảm từ 18px xuống 12px để tiết kiệm diện tích */
+}
+
+.input-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 0.8rem; /* Nhỏ lại một xíu cho tinh tế */
+    color: #4a3f35;
+    padding-left: 5px;
+}
+
+.input-icon-wrapper input {
+    width: 100%;
+    padding: 12px 15px 12px 45px; /* Thu nhỏ padding trên dưới của input */
+    background: #fdfaf7;
+    border: 1px solid #ece0d1;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: grey;
+}
+
+/* Nút bấm gọn gàng hơn */
+.btn-group-portal {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.btn-portal-submit {
+    padding: 14px; /* Giảm độ dày nút */
     font-size: 1rem;
 }
 
-input {
-    background: #c5b5a7;
-    color: #3b2f2f;
-    outline: none;
+.btn-outline-full {
+    padding: 10px;
+    font-size: 0.85rem;
 }
 
-.btn-group {
-    display: flex;
-    gap: 10px;
-    margin-top: 1rem;
-}
-
-button {
-    cursor: pointer;
-    font-weight: 700;
-    background: #c5b5a7;
-    transition: 0.3s;
-}
-
-.link {
-    text-decoration: underline;
-    cursor: pointer;
-    font-weight: bold;
-    color: #74b9ff;
-    margin-left: 5px;
-}
-
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-    }
-
-    .left {
-        display: none;
-    }
-
-    .right {
-        flex: 1;
-        padding: 3rem 1rem;
-    }
-}
-.password-wrapper {
-    position: relative;
-    width: 100%;
-    display: flex;
-    align-items: center;
-}
-
-.password-wrapper .input-forgot {
-    width: 100%;
-    padding-right: 40px;
-}
-
-.eye-toggle {
-    position: absolute;
-    right: 15px;
-    cursor: pointer;
-    font-size: 18px;
-    user-select: none;
-    color: #666;
-}
-
-.eye-toggle:hover {
-    color: #000;
+.footer-link-text {
+    margin-top: 15px;
+    font-size: 0.85rem;
 }

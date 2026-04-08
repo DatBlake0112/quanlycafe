@@ -3,7 +3,7 @@ import axios from 'axios';
 import moment from 'moment';
 import "../styles/chamcong.css";
 
-// 1. Cấu hình Axios Instance để gửi kèm Token tự động
+// 1. Cấu hình Axios Instance
 const api = axios.create({
     baseURL: 'http://localhost:8082/api',
 });
@@ -18,30 +18,36 @@ api.interceptors.request.use((config) => {
 
 const ChamCong = () => {
     // Lấy thông tin từ LocalStorage
-    const maNV = localStorage.getItem('maNhanVien') || 'QL003';
-    const tenNV = localStorage.getItem('tenNhanVien') || 'Nhân viên';
+    const [maNV] = useState(localStorage.getItem('maNhanVien'));
+    const [tenNV] = useState(localStorage.getItem('tenNhanVien') || 'Nhân viên');
 
     const [status, setStatus] = useState({ isWorking: false, startTime: null });
     const [timerDisplay, setTimerDisplay] = useState("00:00:00");
+
     const [activeDays, setActiveDays] = useState([]);
+    const [viewDate, setViewDate] = useState({
+        month: moment().month() + 1,
+        year: moment().year()
+    });
 
     /**
-     * 2. Hàm đồng bộ dữ liệu từ Backend 8082
+     * 2. Hàm đồng bộ dữ liệu từ Backend
      */
     const syncData = useCallback(async () => {
+        if (!maNV) return;
+
         try {
             const [resStatus, resDays] = await Promise.all([
                 api.get(`/cham-cong/status/${maNV}`),
                 api.get(`/cham-cong/active-days`, {
                     params: {
                         maNV,
-                        month: moment().month() + 1,
-                        year: moment().year()
+                        month: viewDate.month,
+                        year: viewDate.year
                     }
                 })
             ]);
 
-            // Cập nhật trạng thái đang làm hay không
             if (resStatus.status === 200 && resStatus.data) {
                 setStatus({
                     isWorking: resStatus.data.trangThai === "Đang làm",
@@ -51,7 +57,6 @@ const ChamCong = () => {
                 setStatus({ isWorking: false, startTime: null });
             }
 
-            // Cập nhật danh sách ngày đi làm để tô màu lịch
             if (resDays.data) {
                 setActiveDays(resDays.data);
             }
@@ -59,7 +64,7 @@ const ChamCong = () => {
             console.error("Lỗi đồng bộ dữ liệu:", error);
             setStatus({ isWorking: false, startTime: null });
         }
-    }, [maNV]);
+    }, [maNV, viewDate]);
 
     /**
      * 3. Xử lý khi bấm nút VÀO CA / TAN LÀM
@@ -70,7 +75,6 @@ const ChamCong = () => {
 
         try {
             await api.post(`/cham-cong/thuc-hien`, { maNV });
-            // Sau khi POST thành công, gọi syncData để cập nhật lại giao diện
             await syncData();
         } catch (error) {
             const errorMsg = error.response?.data || "Lỗi kết nối server";
@@ -78,9 +82,9 @@ const ChamCong = () => {
         }
     };
 
-    // Load dữ liệu khi vào trang
     useEffect(() => {
-        syncData();
+        const init = async () => { await syncData(); };
+        init();
     }, [syncData]);
 
     /**
@@ -105,19 +109,44 @@ const ChamCong = () => {
         return () => { if (timer) clearInterval(timer); };
     }, [status.isWorking, status.startTime]);
 
+    if (!maNV) {
+        return <div className="error-msg">Vui lòng đăng nhập để sử dụng chức năng này.</div>;
+    }
+
     return (
         <div className="attendance-layout">
-            {/* PANEL TRÁI: LỊCH LÀM VIỆC */}
             <div className="left-panel">
                 <div className="header-box">
-                    <h2>Lịch làm việc</h2>
-                    <p className="month-label">Tháng {moment().format('M / YYYY')}</p>
+                    <h2>Lịch sử làm việc</h2>
+
+                    {/* BỘ LỌC THÁNG NĂM */}
+                    <div className="calendar-filter">
+                        <select
+                            value={viewDate.month}
+                            onChange={(e) => setViewDate({...viewDate, month: parseInt(e.target.value)})}
+                        >
+                            {[...Array(12)].map((_, i) => (
+                                <option key={i + 1} value={i + 1}>Tháng {i + 1}</option>
+                            ))}
+                        </select>
+
+                        <select
+                            value={viewDate.year}
+                            onChange={(e) => setViewDate({...viewDate, year: parseInt(e.target.value)})}
+                        >
+                            {[2025, 2026, 2027].map(y => (
+                                <option key={y} value={y}>Năm {y}</option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
+
                 <div className="calendar-box">
                     {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map(d => (
                         <div key={d} className="dow">{d}</div>
                     ))}
-                    {[...Array(moment().daysInMonth())].map((_, i) => {
+                    {/* Render số ngày dựa trên tháng/năm được chọn */}
+                    {[...Array(moment(`${viewDate.year}-${viewDate.month}`, "YYYY-M").daysInMonth())].map((_, i) => {
                         const day = i + 1;
                         const isSelected = activeDays.includes(day);
                         return (
@@ -129,7 +158,6 @@ const ChamCong = () => {
                 </div>
             </div>
 
-            {/* PANEL PHẢI: THÔNG TIN & ĐỒNG HỒ */}
             <div className="right-panel">
                 <div className="user-card">
                     <div className="avatar">👤</div>

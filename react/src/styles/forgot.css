@@ -147,3 +147,16 @@ html, body {
 .eye-toggle:hover {
     color: #000;
 }
+.btn-portal-submit {
+    width: 100%;
+    padding: 18px;
+    background: #3e342c;
+    color: #f3e9dc;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: 0.3s;
+}

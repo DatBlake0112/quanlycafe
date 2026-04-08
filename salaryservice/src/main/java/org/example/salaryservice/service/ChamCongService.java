@@ -5,8 +5,10 @@ import org.example.salaryservice.entity.ChamCong;
 import org.example.salaryservice.repository.ChamCongRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Service
@@ -26,10 +28,30 @@ public class ChamCongService {
     }
 
     private ChamCong checkIn(String maNV) {
+        LocalDateTime now = LocalDateTime.now();
+        int hour = now.getHour();
+        String prefix;
+
+        // 1. Phân loại ca làm việc dựa trên giờ vào
+        if (hour >= 6 && hour < 12) {
+            prefix = "S"; // Ca Sáng
+        } else if (hour >= 12 && hour < 18) {
+            prefix = "C"; // Ca Chiều
+        } else if (hour >= 18 && hour < 22) {
+            prefix = "T"; // Ca Tối
+        } else {
+            // 2. Chặn ca đêm (22h đêm đến 6h sáng hôm sau)
+            throw new RuntimeException("Ngoài giờ làm việc! Hệ thống không cho phép chấm công từ 22h đêm đến 6h sáng.");
+        }
+
+        // 3. Tạo mã ca theo motip: [Prefix][ddMMyyyy] -> VD: C08042026
+        String maCaTuDong = prefix + now.format(DateTimeFormatter.ofPattern("ddMMyyyy"));
+
         ChamCong cc = new ChamCong();
         cc.setMaChamCong("CC" + System.currentTimeMillis() % 100000);
         cc.setMaNhanVien(maNV);
-        cc.setThoiGianVao(LocalDateTime.now());
+        cc.setMaCa(maCaTuDong); // Gán mã ca tự động sinh ra
+        cc.setThoiGianVao(now);
         cc.setTrangThai("Đang làm");
         return repo.save(cc);
     }
@@ -39,7 +61,9 @@ public class ChamCongService {
         cc.setTrangThai("Hoàn thành");
         if (cc.getThoiGianVao() != null) {
             long mins = Duration.between(cc.getThoiGianVao(), cc.getThoiGianRa()).toMinutes();
-            cc.setSoGioLam(mins / 60.0);
+            // Tính số giờ và làm tròn đến 2 chữ số thập phân
+            double hours = mins / 60.0;
+            cc.setSoGioLam(Math.round(hours * 100.0) / 100.0);
         }
         return repo.save(cc);
     }

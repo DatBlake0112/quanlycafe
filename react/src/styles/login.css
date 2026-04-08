@@ -1,122 +1,174 @@
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-html, body {
+html, body, #root {
     width: 100%;
-    height: 100%;
+    height: 100vh;
     overflow: hidden;
 }
 
-.login-container {
+.portal-container {
     display: flex;
     height: 100vh;
-    width: 100%;
+    width: 100vw;
 }
 
-.login-form-section {
+/* --- BÊN TRÁI --- */
+.portal-hero-section {
+    width: 55%;
+    height: 100%;
+    background: url('/cf.png') no-repeat center;
+    background-size: cover;
+}
+
+.hero-overlay {
+    background: linear-gradient(135deg, rgba(45, 36, 30, 0.92) 0%, rgba(85, 68, 56, 0.85) 100%);
+    height: 100%;
+    padding: 80px;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: space-between; Thay đổi cái này */
+    justify-content: center;
+    position: relative;
+}
+
+.hero-title-wrapper {
+    margin: 20px 0;
+}
+
+.hero-title {
+    font-size: 3.2rem;
+    font-weight: 800;
+    line-height: 1.3;
+    color: #fff;
+}
+
+.highlight { color: #d4a373; }
+
+.hero-description p{
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: #ffffff;
+    max-width: 520px;
+    opacity: 0.9;
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+/* Sửa lỗi text footer bên trái bị dính */
+.hero-footer {
+    position: absolute;
+    bottom: 40px;
+    display: flex;
+    gap: 30px;
+    font-size: 0.85rem;
+    color: #f3e9dc;
+    opacity: 0.6;
+}
+
+/* --- BÊN PHẢI --- */
+.portal-form-section {
     width: 45%;
-    background: #3b2f2f;
-    color: white;
+    height: 100%;
+    background: #fff;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    height: 100%;
+    padding: 40px;
 }
 
-.title-coffee {
-    font-family: 'Oswald', sans-serif;
-    font-size: 5rem;
-    letter-spacing: -2px;
-    line-height: 1;
-    margin-bottom: 10px;
-    text-transform: uppercase;
+.top-right-logo {
+    margin-bottom: 30px;
 }
 
-.logo-circle {
-    width: 200px;
-    height: 200px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    overflow: hidden;
+.top-right-logo img {
+    height: 130px;
+    width: auto;
+}
+
+.form-wrapper {
+    width: 90%;
+    max-width: 400px;
+}
+
+.welcome-text-group {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.form-welcome {
+    font-size: 2rem;
+    color: #2d241e;
+}
+
+.form-subtitle { color: #8c7d70; font-size: 0.95rem; }
+
+/* FIX QUAN TRỌNG: Đưa icon vào trong ô input */
+.input-field {
     margin-bottom: 20px;
-    background: #d2c1b0;
+}
+
+.input-field label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #4a3f35;
+    text-align: center; /* Căn giữa label giống trong ảnh */
+}
+
+.input-icon-wrapper {
+    position: relative; /* Thân wrapper làm mốc cho icon */
+    width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(255,255,255,0.1);
 }
 
-.logo-circle img {
-    width: 110%;
-    height: 110%;
-    object-fit: cover;
+.input-icon {
+    position: absolute;
+    left: 15px; /* Ghim icon vào bên trái wrapper */
+    color: #a69080;
+    z-index: 2;
 }
 
-.title-login {
-    font-family: 'Oswald', sans-serif;
-    font-size: 3rem;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-}
-
-.input-group {
-    width: 80%;
-    max-width: 400px;
-    position: relative;
-    margin-bottom: 15px;
-}
-
-input {
+.input-icon-wrapper input {
     width: 100%;
-    padding: 12px 15px;
-    background: #c5b5a7;
-    border: none;
-    outline: none;
+    padding: 14px 15px 14px 45px; /* Padding trái 45px để né icon */
+    background: #fdfaf7;
+    border: 1px solid #ece0d1;
+    border-radius: 10px;
     font-size: 1rem;
-    color: #3b2f2f;
-    border-radius: 4px;
+    outline: none;
 }
 
-.eye-icon {
+.eye-toggle {
     position: absolute;
     right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #3b2f2f;
     cursor: pointer;
+    z-index: 2;
 }
 
-.btn-login {
-    width: 80%;
-    max-width: 300px;
-    padding: 12px;
-    background: #d2c1b0;
-    color: #3b2f2f;
-    border: none;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    border-radius: 4px;
-    margin-top: 10px;
-    text-transform: uppercase;
-    transition: 0.3s;
-}
-
-.btn-login:hover {
-    background: #c5b5a7;
-}
-
-.footer-text {
-    margin-top: 15px;
+/* Fix checkbox "Ghi nhớ" và "Quên mật khẩu" */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
     font-size: 0.85rem;
-    color: #d2c1b0;
+}
+
+.remember-me {
+    display: block;
+    align-items: center;
+    gap: 15px;
+    color: #6d5748;
 }
 
 .link {
@@ -127,22 +179,29 @@ input {
     margin-left: 5px;
 }
 
-.login-image-section {
-    width: 55%;
-    background: url("/cf.png") no-repeat center;
-    background-size: cover;
-    height: 100%;
-    position: relative;
+.btn-portal-submit {
+    width: 100%;
+    padding: 16px;
+    background: #3e342c;
+    color: #f3e9dc;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 25px;
 }
 
-.title-shop {
-    font-family: 'Oswald', sans-serif;
-    font-size: clamp(5rem, 10vw, 10rem);
-    color: white;
-    font-weight: bold;
-    position: absolute;
-    bottom: 20px;
-    right: 30px;
-    margin: 0;
-    line-height: 0.8;
+.form-footer-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-outline {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ece0d1;
+    background: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: #6d5748;
 }
