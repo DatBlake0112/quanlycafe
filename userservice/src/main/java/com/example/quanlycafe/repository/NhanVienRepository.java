@@ -12,9 +12,11 @@ import java.util.Optional;
 @Repository
 public interface NhanVienRepository extends JpaRepository<NhanVien, String> {
 
-    // Phục vụ trang Quản lý nhân viên
 
-    // Phục vụ tạo mã tự động (QL001, NV001...)
     @Query("SELECT MAX(n.maNhanVien) FROM NhanVien n WHERE n.maNhanVien LIKE :prefix")
     Optional<String> findMaxMaNhanVienByPrefix(@Param("prefix") String prefix);
+
+    @Query("SELECT nv FROM NhanVien nv JOIN nv.taiKhoan tk WHERE tk.tenDangNhap = :username")
+    Optional<NhanVien> findByUsernameFromAccount(@Param("username") String username);
+
 }

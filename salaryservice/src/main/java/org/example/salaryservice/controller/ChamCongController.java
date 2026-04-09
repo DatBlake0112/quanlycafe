@@ -71,4 +71,14 @@ public class ChamCongController {
     public ResponseEntity<?> getUnpaid(@PathVariable String maNV) {
         return ResponseEntity.ok(chamCongRepository.findUnpaidByMaNhanVien(maNV));
     }
+    @GetMapping("/history")
+    public ResponseEntity<?> getHistory(
+            @RequestParam String maNV,
+            @RequestParam int month,
+            @RequestParam int year) {
+
+        return ResponseEntity.ok(
+                chamCongService.getHistoryByMonth(maNV, month, year)
+        );
+    }
 }

@@ -18,10 +18,6 @@ public interface ChamCongRepository extends JpaRepository<ChamCong, String> {
             "AND c.trangThai = 'Hoàn thành' ")
     List<ChamCong> findUnpaidByMaNhanVien(@Param("maNV") String maNV);
 
-    @Query("SELECT DISTINCT DAY(c.thoiGianVao) FROM ChamCong c " +
-            "WHERE c.maNhanVien = :maNV AND MONTH(c.thoiGianVao) = :m AND YEAR(c.thoiGianVao) = :y")
-    List<Integer> findActiveDays(@Param("maNV") String maNV, @Param("m") int m, @Param("y") int y);
-
     @Query("SELECT SUM(c.soGioLam) FROM ChamCong c " +
             "WHERE c.maNhanVien = :maNV " +
             "AND FUNCTION('MONTH', c.thoiGianVao) = :thang " +
@@ -44,4 +40,14 @@ public interface ChamCongRepository extends JpaRepository<ChamCong, String> {
             @Param("maNV") String maNV,
             @Param("month") int month,
             @Param("year") int year);
+    @Query("SELECT cc FROM ChamCong cc " +
+            "WHERE cc.maNhanVien = :maNV " +
+            "AND MONTH(cc.thoiGianVao) = :month " +
+            "AND YEAR(cc.thoiGianVao) = :year " +
+            "ORDER BY cc.thoiGianVao ASC")
+    List<ChamCong> findByMonth(
+            @Param("maNV") String maNV,
+            @Param("month") int month,
+            @Param("year") int year
+    );
 }

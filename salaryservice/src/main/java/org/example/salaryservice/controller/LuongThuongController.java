@@ -1,6 +1,8 @@
 package org.example.salaryservice.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.example.salaryservice.entity.LuongThuong;
+import org.example.salaryservice.service.JwtService;
 import org.example.salaryservice.service.LuongThuongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +15,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/salary")
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@RequiredArgsConstructor
 public class LuongThuongController {
 
     @Autowired
     private LuongThuongService service;
+    private final JwtService jwtService;
 
     @GetMapping("/all")
     public List<LuongThuong> getAll(@RequestParam Integer thang, @RequestParam Integer nam) {

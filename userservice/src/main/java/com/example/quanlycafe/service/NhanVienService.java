@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -78,5 +79,8 @@ public class NhanVienService {
     }
     public List<NhanVien> findAll() {
         return nhanVienRepository.findAll();
+    }
+    public Optional<NhanVien> getNhanVienByUsername(String username) {
+        return nhanVienRepository.findByUsernameFromAccount(username);
     }
 }

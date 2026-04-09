@@ -1,6 +1,7 @@
 package org.example.salaryservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.salaryservice.dto.ChamCongDTO;
 import org.example.salaryservice.entity.ChamCong;
 import org.example.salaryservice.repository.ChamCongRepository;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -71,5 +73,22 @@ public class ChamCongService {
     public Double getTongGioLamTheoThang(String maNV, int thang, int nam) {
         Double tong = repo.sumSoGioLamByMonth(maNV, thang, nam);
         return (tong != null) ? tong : 0.0;
+    }
+    public List<ChamCongDTO> getHistoryByMonth(String maNV, int month, int year) {
+        return repo.findByMonth(maNV, month, year)
+                .stream()
+                .map(cc -> new ChamCongDTO(
+                        // 👉 Lấy ngày từ thoiGianVao
+                        cc.getThoiGianVao().toLocalDate().toString(),
+                        // 👉 Giờ vào
+                        cc.getThoiGianVao().toLocalTime().toString(),
+                        // 👉 Giờ ra (có thể null)
+                        cc.getThoiGianRa() != null
+                                ? cc.getThoiGianRa().toLocalTime().toString()
+                                : "--",
+                        // 👉 Số giờ
+                        cc.getSoGioLam() != null ? cc.getSoGioLam() : 0
+                ))
+                .toList();
     }
 }

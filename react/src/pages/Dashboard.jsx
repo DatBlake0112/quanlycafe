@@ -42,6 +42,14 @@ const Dashboard = () => {
             description: "Quản lý lương thưởng.",
             path: "/tinh-luong", // Bỏ bớt dấu / bị thừa
             color: "#a6a553"
+        },
+        {
+            id: 4,
+            title: "Tài khoản",
+            icon: "👥",
+            description: "Thông tin tài khoản",
+            path:"/profile",
+            color: "green"
         }
     ];
 

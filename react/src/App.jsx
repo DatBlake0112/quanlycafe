@@ -7,6 +7,7 @@ import EmployeeManagement from "./pages/EmployeeManagement";
 import ChamCong from "./pages/ChamCong";
 import Dashboard from "./pages/Dashboard";
 import LuongThuong from "./pages/Salarymanagement";
+import Profile from './pages/Profile';
 
 function App() {
     return (
@@ -24,6 +25,7 @@ function App() {
                 <Route path="/employee-management" element={<EmployeeManagement />} />
                 <Route path="/cham-cong" element={<ChamCong />} />
                 <Route path="/tinh-luong" element={<LuongThuong />} />
+                <Route path="/profile" element={<Profile />} />
             </Routes>
         </Router>
     );
