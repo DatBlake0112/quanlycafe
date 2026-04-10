@@ -18,6 +18,7 @@ function Login() {
                 localStorage.setItem("token", res.data.token);
                 localStorage.setItem("tenNhanVien", res.data.tenNhanVien);
                 localStorage.setItem('maNhanVien', res.data.maNhanVien);
+                localStorage.setItem("role", res.data.role);
                 navigate("/dashboard");
             }
         } catch {

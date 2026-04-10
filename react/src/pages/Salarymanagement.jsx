@@ -17,7 +17,12 @@ function SalaryManagement() {
 
     const loadEmployeeNames = async () => {
         try {
-            const res = await axios.get("http://localhost:8081/api/nhan-vien");
+            const token = localStorage.getItem("token"); // Lấy token đã lưu khi login
+            const res = await axios.get("http://localhost:8081/api/nhan-vien", {
+                headers: {
+                    Authorization: `Bearer ${token}` // Gửi kèm token
+                }
+            });
             const nameMap = {};
             res.data.forEach(emp => { nameMap[emp.maNhanVien] = emp.tenNhanVien; });
             setEmployeeNames(nameMap);
@@ -26,8 +31,12 @@ function SalaryManagement() {
 
     const loadData = useCallback(async () => {
         try {
+            const token = localStorage.getItem("token");
             const res = await axios.get(`http://localhost:8082/api/salary/all`, {
-                params: { thang: filter.thang, nam: filter.nam }
+                params: { thang: filter.thang, nam: filter.nam },
+                headers: {
+                    Authorization: `Bearer ${token}` // Gửi kèm token
+                }
             });
             setSalaryData(res.data);
         } catch (error) { console.error("Lỗi tải dữ liệu lương:", error); }

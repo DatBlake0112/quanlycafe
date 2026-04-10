@@ -1,5 +1,6 @@
 package org.example.salaryservice.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.example.salaryservice.security.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -34,16 +35,18 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable) // Tắt cái này để hết lỗi 302
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Không có quyền truy cập"))
+                )
                 .authorizeHttpRequests(auth -> auth
-                        // Mở cửa hoàn toàn cho các API này để test trước
-                        .requestMatchers("/api/cham-cong/history").permitAll()
-                        .requestMatchers("/api/cham-cong/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/salary/**").permitAll()
+                        .requestMatchers("/api/salary/**").hasRole("ADMIN") // Chỉ ADMIN
+                        .requestMatchers("/api/cham-cong/**").permitAll()
                         .anyRequest().authenticated()
                 );
 
-//        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
