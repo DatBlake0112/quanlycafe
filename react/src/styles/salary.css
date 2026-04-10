@@ -1,330 +1,273 @@
-/* --- CONTAINER CHÍNH & LAYOUT --- */
+/* ===== GLOBAL ===== */
 .salary-wrapper {
     padding: 20px;
-    background-color: #f4f7f6;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    overflow: hidden;
+    background: #f6f8fb;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
 }
 
-/* --- THẺ THỐNG KÊ (STATS) --- */
+/* ===== STATS ===== */
 .stats-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+    gap: 16px;
     margin-bottom: 20px;
-    flex-shrink: 0;
 }
 
 .stat-card {
-    padding: 20px;
+    padding: 18px;
     border-radius: 12px;
     color: white;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
 }
 
-.stat-card span { font-size: 13px; opacity: 0.85; text-transform: uppercase; }
-.stat-card h3 { font-size: 22px; margin-top: 8px; font-weight: 700; }
+.stat-card span {
+    font-size: 12px;
+    opacity: 0.9;
+}
 
-.blue { background: linear-gradient(135deg, #4db6ac, #00897b); }
-.orange { background: linear-gradient(135deg, #f0ad4e, #ec971f); }
-.red { background: linear-gradient(135deg, #d9534f, #c9302c); }
-.gray { background: linear-gradient(135deg, #90a4ae, #607d8b); }
+.stat-card h3 {
+    margin-top: 8px;
+    font-size: 20px;
+}
 
-/* --- KHU VỰC NỘI DUNG TRẮNG --- */
+.blue { background: linear-gradient(135deg, #3b82f6, #6366f1); }
+.orange { background: linear-gradient(135deg, #f59e0b, #f97316); }
+.red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.gray { background: linear-gradient(135deg, #6b7280, #374151); }
+
+/* ===== CONTENT ===== */
 .salary-content {
     background: white;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
-/* --- HEADER ACTIONS (SEARCH & BUTTONS) --- */
+/* ===== HEADER ===== */
 .header-actions {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    flex-shrink: 0;
+    margin-bottom: 15px;
 }
 
 .filter-group {
     display: flex;
     align-items: center;
-    gap: 12px;
-    background: #f9f9f9;
-    padding: 6px 18px;
-    border-radius: 50px;
+    gap: 10px;
+    background: #f9fafb;
+    padding: 6px 14px;
+    border-radius: 30px;
     border: 1px solid #eee;
-}
-
-.filter-group select {
-    border: none;
-    background: transparent;
-    font-weight: 600;
-    color: #333;
-    outline: none;
-    cursor: pointer;
-    border-right: 1px solid #ddd;
-    padding-right: 10px;
 }
 
 .search-input {
     border: none;
-    background: transparent;
     outline: none;
-    padding: 8px;
-    width: 200px;
-    font-size: 14px;
-    color: black;
+    background: transparent;
+    width: 180px;
 }
 
-/* --- BẢNG DỮ LIỆU --- */
-/* --- BẢNG DỮ LIỆU (CẬP NHẬT ĐỂ HÀNG CAO HƠN) --- */
+/* ===== TABLE ===== */
 .table-scroll {
-    flex-grow: 1;
+    max-height: 420px;
     overflow-y: auto;
-    border-radius: 12px; /* Bo góc mượt hơn */
-    border: 1px solid #f0f0f0;
-    margin-top: 10px;
+    border: 1px solid #eee;
+    border-radius: 10px;
 }
 
 .styled-table {
     width: 100%;
-    border-collapse: collapse; /* Đổi sang collapse để padding chuẩn hơn */
-    border-spacing: 0;
+    border-collapse: collapse;
 }
 
 .styled-table thead th {
     position: sticky;
     top: 0;
-    z-index: 10;
-    background: #fcfcfc;
-    padding: 18px 15px; /* Tăng padding trên dưới cho header */
-    border-bottom: 2px solid #eee;
-    color: #888;
+    z-index: 5;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    padding: 16px;
     font-size: 13px;
     text-transform: uppercase;
-    text-align: center;
 }
 
 .styled-table td {
-    padding: 20px 15px; /* TĂNG PADDING NÀY: Giúp hàng cao và thoáng hơn */
-    border-bottom: 1px solid #f5f5f5;
+    padding: 15px;
+    border-bottom: 1px solid #f1f1f1;
     text-align: center;
-    vertical-align: middle;
-    font-size: 15px; /* Tăng nhẹ size chữ cho dễ đọc */
-    color: #444;
+    color: black;
 }
 
-/* Hiệu ứng hover giúp hàng nổi bật */
 .styled-table tbody tr:hover {
-    background-color: #fafafa;
-    transition: background 0.2s;
+    background: #f9fafb;
 }
 
-.styled-table td:nth-child(2) {
-    text-align: left;
-    font-weight: 500;
-}
-.text-bold { font-weight: 700; color: #333; }
-.text-primary { color: #00897b; font-weight: 800; }
+/* ===== TEXT ===== */
+.text-bold { font-weight: 700; }
+.text-primary { color: #4f46e5; font-weight: 700; }
+.text-success { color: #16a34a; font-weight: 600; }
+.text-danger { color: #dc2626; font-weight: 600; }
 
-/* Badge trạng thái */
+/* ===== STATUS ===== */
 .status-badge {
-    padding: 4px 12px;
+    padding: 4px 10px;
     border-radius: 20px;
     font-size: 11px;
     font-weight: 700;
 }
-.paid { background: #e8f5e9; color: #2e7d32; }
-.unpaid { background: #fff3e0; color: #ef6c00; }
 
-/* --- NÚT BẤM HÀNH ĐỘNG --- */
-.btn-primary { background: #00bcd4; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 700; }
-.btn-secondary { background: #78909c; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
-
-.action-buttons-group { display: flex; gap: 8px; justify-content: center; }
-
-.btn-action {
-    padding: 6px 14px;
-    border: none;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.2s;
+.paid {
+    background: #dcfce7;
+    color: #15803d;
 }
 
-.btn-action.detail { background: #eceff1; color: #455a64; }
-.btn-action.detail:disabled { cursor: not-allowed; }
-.btn-action.pay { background: #00acc1; color: white; }
-.btn-action.pay:disabled { background: #e0e0e0; cursor: not-allowed; }
+.unpaid {
+    background: #fef3c7;
+    color: #d97706;
+}
 
-/* --- CSS CHO MODAL MẪU MỚI (CHỈ SỬA PHẦN NÀY) --- */
+/* ===== BUTTON ===== */
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-primary {
+    background: #4f46e5;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background: #e5e7eb;
+    color: black;
+}
+
+/* ACTION */
+.action-buttons-group {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+}
+
+.btn-action {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    border: none;
+}
+
+.btn-action.detail { background: #f1f5f9; }
+.btn-action.pay { background: #10b981; color: white; }
+
+/* ===== MODAL ===== */
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Nền tối mờ phía sau */
+    inset: 0;
+    background: rgba(0,0,0,0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
 }
 
 .modal-content.large-modal {
     background: white;
     width: 680px;
-    max-width: 95%;
-    max-height: 90vh;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    max-height: 85vh;
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
-    animation: slideUp 0.3s ease-out;
+    overflow: hidden;
 }
 
+/* HEADER */
 .modal-header {
-    padding: 15px 25px;
+    padding: 15px 20px;
     border-bottom: 1px solid #eee;
     display: flex;
     justify-content: space-between;
-    align-items: center;
 }
 
-.modal-header h2 {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: #333;
+.close-btn {
+    border: none;
+    color: red;
+    background: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding-top: 10px ;
 }
 
+/* BODY */
 .modal-body {
-    padding: 20px 25px;
+    padding: 15px 20px;
     overflow-y: auto;
 }
 
-/* Định dạng Fieldset (Các khung [TÓM TẮT], [DANH SÁCH]...) */
+/* SUMMARY */
+.summary-row {
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+/* FIELDSET */
 .salary-fieldset {
-    border: 1.5px solid #e0e0e0;
-    border-radius: 10px;
-    padding: 18px;
-    margin-bottom: 20px;
-    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 15px;
+    color: black;
 }
 
-.salary-fieldset legend {
-    font-weight: 800;
-    color: #607d8b;
-    padding: 0 12px;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-}
-
-.form-row {
-    margin-bottom: 10px;
-    font-size: 0.95rem;
-    color: #444;
-    background: white;
-}
-
-/* Bảng thưởng/phạt chi tiết trong modal */
+/* TABLE MODAL */
 .adjustment-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 10px;
 }
 
-.adjustment-table th {
-    background-color: #f8f9fa;
-    color: #666;
-    font-size: 13px;
-    padding: 10px;
-    border: 1px solid #eee;
-}
-
+.adjustment-table th,
 .adjustment-table td {
-    padding: 12px;
     border: 1px solid #eee;
-    font-size: 14px;
+    padding: 10px;
 }
 
-/* Tổng điều chỉnh & Thực nhận cuối cùng */
-.total-adjustment {
-    text-align: right;
-    font-weight: 700;
-    margin-top: 10px;
-    font-size: 0.9rem;
-}
-
+/* FINAL */
 .final-payment {
     text-align: center;
-    background-color: #f1f8e9; /* Màu xanh lá nhạt */
-    padding: 20px;
-    border-radius: 10px;
-    border: 1px dashed #a5d6a7;
-    margin: 10px 0;
+    background: #ecfdf5;
+    padding: 15px;
+    border-radius: 8px;
 }
 
 .final-payment h3 {
-    margin: 8px 0 0 0;
-    font-size: 1.6rem;
-    color: #2e7d32;
-    font-weight: 900;
+    color: #059669;
 }
 
-/* Input trong khung Thêm điều chỉnh nhanh */
-.salary-fieldset select,
+/* INPUT */
 .salary-fieldset input,
+.salary-fieldset select,
 .salary-fieldset textarea {
     border: 1px solid #ddd;
     border-radius: 6px;
-    padding: 8px;
-    font-size: 14px;
-    outline: none;
+    padding: 7px;
 }
 
-.salary-fieldset textarea {
-    width: 100%;
-    height: 60px;
-    margin-top: 10px;
-    box-sizing: border-box;
-}
-
+/* BUTTON UPDATE */
 .btn-update-salary {
-    background-color: #00897b;
+    background: #4f46e5;
     color: white;
-    border: none;
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     border-radius: 6px;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: 0.3s;
 }
 
-.btn-update-salary:hover {
-    background-color: #00695c;
-}
-
+/* FOOTER */
 .modal-footer {
-    padding: 15px;
+    padding: 12px;
     border-top: 1px solid #eee;
-    display: flex;
-    justify-content: center;
-}
-
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
 }

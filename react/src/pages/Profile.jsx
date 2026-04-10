@@ -8,66 +8,127 @@ const Profile = () => {
     const [selectedMonth, setSelectedMonth] = useState("2026-04");
     const token = localStorage.getItem('token');
 
-    // 👉 Lấy thông tin cá nhân từ userservice (8081)
+    // Modal state
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [pwdData, setPwdData] = useState({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+    });
+    const [pwdError, setPwdError] = useState("");
+    const [pwdLoading, setPwdLoading] = useState(false);
+
+    // 👁️ show/hide password
+    const [showPwd, setShowPwd] = useState({
+        old: false,
+        new: false,
+        confirm: false
+    });
+
+    // Fetch profile
     useEffect(() => {
         const fetchProfile = async () => {
             try {
                 const res = await axios.get("http://localhost:8081/api/nhan-vien/me", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                setUser(res.data); // Trích xuất các trường: tenNhanVien, ngaySinh, chucVu, ngayVaoLam
+                setUser(res.data);
             } catch (err) {
-                console.error("Lỗi lấy thông tin cá nhân:", err);
+                console.error(err);
             }
         };
         if (token) fetchProfile();
     }, [token]);
 
+    // Fetch work history
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                if (!user) return;
+                if (!user?.maNhanVien) return;
+
                 const [year, month] = selectedMonth.split("-");
                 const res = await axios.get("http://localhost:8082/api/cham-cong/history", {
-                    params: { maNV: user.maNhanVien, month: month, year: year },
+                    params: {
+                        maNV: user.maNhanVien,
+                        month: parseInt(month),
+                        year: parseInt(year)
+                    },
                     headers: { Authorization: `Bearer ${token}` }
                 });
+
                 setWorkHistory(res.data || []);
             } catch (err) {
-                console.error("Lỗi lấy lịch sử công:", err);
+                console.error(err);
             }
         };
         fetchHistory();
-    }, [selectedMonth, token, user]);
+    }, [selectedMonth, user, token]);
+
+    // Change password
+    const handleChangePassword = async (e) => {
+        e.preventDefault();
+        setPwdError("");
+
+        if (pwdData.newPassword !== pwdData.confirmPassword) {
+            return setPwdError("Mật khẩu xác nhận không khớp!");
+        }
+
+        setPwdLoading(true);
+        try {
+            await axios.post(
+                "http://localhost:8081/api/auth/change-password",
+                {
+                    oldPassword: pwdData.oldPassword,
+                    newPassword: pwdData.newPassword
+                },
+                {
+                    headers: { Authorization: `Bearer ${token}` }
+                }
+            );
+
+            alert("Đổi mật khẩu thành công!");
+            setIsModalOpen(false);
+            setPwdData({ oldPassword: "", newPassword: "", confirmPassword: "" });
+
+        } catch (err) {
+            console.log("Full Error:", err.response); // Xem status và data trả về
+            setPwdError(err.response?.data?.message || "Đổi mật khẩu thất bại");
+        } finally {
+            setPwdLoading(false);
+        }
+    };
 
     if (!user) return <div className="p-loading">Đang tải...</div>;
 
-    // Lấy lương theo giờ từ trường tienLuong trong NhanVien.java
     const luongPerHour = user.tienLuong || 0;
+    const formatTime = (t) => t ? t.slice(0, 5) : "--";
 
     return (
         <div className="profile-container">
-            {/* KHỐI THÔNG TIN CÁ NHÂN */}
+            {/* PROFILE */}
             <div className="profile-card">
                 <div className="profile-left">
-                    <div className="avatar">{user.tenNhanVien?.charAt(0).toUpperCase()}</div>
+                    <div className="avatar">
+                        {user.tenNhanVien?.charAt(0).toUpperCase()}
+                    </div>
                 </div>
 
                 <div className="profile-right">
-                    <p><strong>Họ và tên:</strong> <span className="name">{user.tenNhanVien}</span></p>
-                    <p><strong>Ngày sinh:</strong> {user.ngaySinh || "Chưa cập nhật"}</p> {/* */}
-                    <p><strong>Chức vụ:</strong> {user.chucVu || "Nhân viên"}</p> {/* */}
-                    <p><strong>Ngày vào làm:</strong> {user.ngayVaoLam || "N/A"}</p> {/* */}
-                    <p><strong>Tên đăng nhập:</strong> {user.taiKhoan?.tenDangNhap || "N/A"}</p> {/* */}
+                    <p><strong>Họ và tên:</strong> {user.tenNhanVien}</p>
+                    <p><strong>Ngày sinh:</strong> {user.ngaySinh || "Chưa cập nhật"}</p>
+                    <p><strong>Chức vụ:</strong> {user.chucVu || "Nhân viên"}</p>
+                    <p><strong>Ngày vào làm:</strong> {user.ngayVaoLam || "N/A"}</p>
+                    <p><strong>Tài khoản:</strong> {user.taiKhoan?.tenDangNhap || "N/A"}</p>
 
-                    <button className="btn-change-password">Đổi mật khẩu</button>
+                    <button className="btn-change-password" onClick={() => setIsModalOpen(true)}>
+                        Đổi mật khẩu
+                    </button>
                 </div>
             </div>
 
-            {/* KHỐI LỊCH SỬ LÀM VIỆC */}
             <div className="history">
                 <div className="history-header">
-                    <h3>Lịch sử làm việc:</h3>
+                    <h3>Lịch sử làm việc</h3>
                     <input
                         type="month"
                         value={selectedMonth}
@@ -75,6 +136,7 @@ const Profile = () => {
                     />
                 </div>
 
+                {/* WRAPPER MỚI */}
                 <div className="table-wrapper">
                     <table className="history-table">
                         <thead>
@@ -84,37 +146,105 @@ const Profile = () => {
                             <th>Giờ vào</th>
                             <th>Giờ ra</th>
                             <th>Số giờ</th>
-                            <th>Thành tiền (VNĐ)</th>
+                            <th>Tiền</th>
                         </tr>
                         </thead>
-                        <tbody>
-                        {workHistory.length > 0 ? workHistory.map((item, index) => {
-                            // Xử lý LocalDateTime từ ChamCong Entity
-                            const vao = new Date(item.thoiGianVao);
-                            const ra = item.thoiGianRa ? new Date(item.thoiGianRa) : null;
-                            const soGio = item.soGioLam || 0; //
 
+                        <tbody>
+                        {workHistory.length > 0 ? workHistory.map((item, i) => {
+                            const soGio = item.soGio || 0;
                             return (
-                                <tr key={index}>
-                                    <td>{index + 1}</td>
-                                    <td>{vao.toLocaleDateString("vi-VN")}</td>
-                                    <td>{vao.toLocaleTimeString("vi-VN", {hour: '2-digit', minute:'2-digit'})}</td>
-                                    <td>{ra ? ra.toLocaleTimeString("vi-VN", {hour: '2-digit', minute:'2-digit'}) : "--"}</td>
-                                    <td>{soGio.toFixed(1)}</td>
+                                <tr key={i}>
+                                    <td>{i + 1}</td>
+                                    <td>{new Date(item.ngay).toLocaleDateString("vi-VN")}</td>
+                                    <td>{formatTime(item.gioVao)}</td>
+                                    <td>{formatTime(item.gioRa)}</td>
+                                    <td>{soGio.toFixed(2)}</td>
                                     <td>{(soGio * luongPerHour).toLocaleString("vi-VN")}</td>
                                 </tr>
                             );
                         }) : (
-                            <tr><td colSpan="6">Không có dữ liệu tháng này</td></tr>
+                            <tr><td colSpan="6">Không có dữ liệu</td></tr>
                         )}
                         </tbody>
                     </table>
                 </div>
-
-                <div className="salary-hour-box">
-                    Lương / giờ: <span>{luongPerHour.toLocaleString("vi-VN")} VNĐ/h</span>
+                <div className="table-footer">
+                    <div className="salary-hour-box">
+                        💰 {luongPerHour.toLocaleString("vi-VN")} VNĐ/H
+                    </div>
                 </div>
             </div>
+
+            {/* MODAL */}
+            {isModalOpen && (
+                <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <h2>Đổi mật khẩu</h2>
+
+                        <form onSubmit={handleChangePassword}>
+                            {/* OLD */}
+                            <div className="form-group password-group">
+                                <label>Mật khẩu cũ</label>
+                                <div className="password-wrapper">
+                                    <input
+                                        type={showPwd.old ? "text" : "password"}
+                                        value={pwdData.oldPassword}
+                                        onChange={(e) => setPwdData({ ...pwdData, oldPassword: e.target.value })}
+                                        required
+                                    />
+                                    <span onClick={() => setShowPwd({ ...showPwd, old: !showPwd.old })}>
+                                        {showPwd.old ? "🙈" : "👁️"}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* NEW */}
+                            <div className="form-group password-group">
+                                <label>Mật khẩu mới</label>
+                                <div className="password-wrapper">
+                                    <input
+                                        type={showPwd.new ? "text" : "password"}
+                                        value={pwdData.newPassword}
+                                        onChange={(e) => setPwdData({ ...pwdData, newPassword: e.target.value })}
+                                        required
+                                    />
+                                    <span onClick={() => setShowPwd({ ...showPwd, new: !showPwd.new })}>
+                                        {showPwd.new ? "🙈" : "👁️"}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* CONFIRM */}
+                            <div className="form-group password-group">
+                                <label>Xác nhận</label>
+                                <div className="password-wrapper">
+                                    <input
+                                        type={showPwd.confirm ? "text" : "password"}
+                                        value={pwdData.confirmPassword}
+                                        onChange={(e) => setPwdData({ ...pwdData, confirmPassword: e.target.value })}
+                                        required
+                                    />
+                                    <span onClick={() => setShowPwd({ ...showPwd, confirm: !showPwd.confirm })}>
+                                        {showPwd.confirm ? "🙈" : "👁️"}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {pwdError && <p className="error-msg">{pwdError}</p>}
+
+                            <div className="modal-actions">
+                                <button className="btn-save" disabled={pwdLoading}>
+                                    {pwdLoading ? "Đang xử lý..." : "Xác nhận"}
+                                </button>
+                                <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)}>
+                                    Hủy
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

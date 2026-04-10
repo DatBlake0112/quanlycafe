@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Mở cửa hoàn toàn cho các API này để test trước
+                        .requestMatchers("/api/cham-cong/history").permitAll()
                         .requestMatchers("/api/cham-cong/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/salary/**").permitAll()

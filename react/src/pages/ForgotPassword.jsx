@@ -79,7 +79,7 @@ export default function ForgotPassword() {
             {/* BÊN PHẢI - Form xác thực 3 bước */}
             <div className="portal-form-section">
                 <div className="top-right-logo">
-                    <img src="/logo_lado.png" alt="Lado Logo" />
+                    <img src="/lg_lado.png" alt="Lado Logo" />
                 </div>
 
                 <div className="form-wrapper">

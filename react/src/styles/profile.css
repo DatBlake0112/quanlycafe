@@ -1,70 +1,107 @@
+/* ===== GLOBAL ===== */
 body {
-    background: #f3f4f6;
-    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #eef2ff, #f8fafc);
+    font-family: 'Inter', Arial, sans-serif;
 }
 
+/* ===== CONTAINER ===== */
 .profile-container {
-    padding: 20px;
+    padding: 30px;
 }
 
-/* CARD */
+/* ===== CARD ===== */
 .profile-card {
     display: flex;
-    background: #e5e7eb;
-    padding: 20px;
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    padding: 25px;
+    border-radius: 20px;
     align-items: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: 0.3s;
 }
 
-/* LEFT */
+.profile-card:hover {
+    transform: translateY(-3px);
+}
+
+/* ===== LEFT ===== */
 .profile-left {
-    margin-right: 20px;
+    margin-right: 25px;
 }
 
 .avatar {
     width: 120px;
     height: 120px;
-    background: #c4c4c4;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    color: white;
+    font-size: 28px;
+    box-shadow: 0 8px 20px rgba(99,102,241,0.4);
 }
 
-/* RIGHT */
+/* ===== RIGHT ===== */
 .profile-right p {
-    margin: 5px 0;
+    margin: 6px 0;
+    color: #374151;
 }
 
 .name {
-    color: #1d4ed8;
-    font-weight: bold;
+    color: #4f46e5;
+    font-weight: 700;
+    font-size: 18px;
 }
 
-/* BUTTON */
+/* ===== BUTTON ===== */
 .btn-change-password {
-    margin-top: 10px;
+    margin-top: 12px;
     width: 100%;
-    padding: 10px;
-    background: #1d4ed8;
+    padding: 12px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
     color: white;
     border: none;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: 0.25s;
 }
 
-/* HISTORY */
+.btn-change-password:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99,102,241,0.4);
+}
+
+/* ===== HISTORY ===== */
+.history {
+    position: relative;
+    margin-top: 25px;
+    background: rgba(255,255,255,0.8);
+    padding: 20px;
+    border-radius: 18px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+}
+
+.table-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
 .salary-hour-box {
-    position: absolute;
-    bottom: 10px;
-    right: 20px;
-    background: #16a34a;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
     color: white;
-    padding: 10px 18px;
-    border-radius: 8px;
+    padding: 10px 14px;
+    border-radius: 12px;
     font-weight: bold;
+    font-size: 20px;
+    box-shadow: 0 6px 15px rgba(34,197,94,0.35);
 }
 
+/* ===== HEADER ===== */
 .history-header {
     display: flex;
     align-items: center;
@@ -72,33 +109,167 @@ body {
 }
 
 .history-header h3 {
-    margin-right: 10px;
+    margin: 0;
+    font-size: 18px;
 }
 
-/* TABLE */
+/* ===== TABLE ===== */
+.table-wrapper {
+    position: relative;
+    margin-top: 12px;
+    max-height: 250px;
+    overflow-y: auto;
+    border-radius: 10px;
+}
+
 .history-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
-}
-
-.history-table th,
-.history-table td {
-    border: 1px solid #999;
-    padding: 8px;
-    text-align: center;
+    overflow: hidden;
+    border-radius: 10px;
 }
 
 .history-table th {
-    background: #d1d5db;
+    background: #6366f1;
+    color: white;
+    padding: 10px;
+    font-size: 14px;
 }
 
-.history {
-    position: relative;
-    padding-bottom: 60px;
+.history-table td {
+    padding: 10px;
+    text-align: center;
+    background: #fff;
+    border-bottom: 1px solid #eee;
 }
-.table-wrapper {
-    max-height: 250px;
-    overflow-y: auto;
-    margin-top: 10px;
+
+.history-table tr:hover td {
+    background: #f1f5ff;
+}
+
+/* ===== MODAL ===== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+/* MODAL BOX */
+.modal-content {
+    width: 420px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 20px;
+    padding: 25px 30px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    backdrop-filter: blur(12px);
+    animation: scaleUp 0.3s ease;
+}
+
+/* TITLE */
+.modal-content h2 {
+    text-align: center;
+    margin-bottom: 18px;
+    color: #4f46e5;
+}
+
+/* FORM */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 14px;
+}
+
+.form-group label {
+    font-size: 13px;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+/* INPUT */
+.form-group input {
+    padding: 11px 12px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    outline: none;
+    transition: 0.25s;
+}
+
+.form-group input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99,102,241,0.2);
+}
+
+/* ERROR */
+.error-msg {
+    color: #ef4444;
+    font-size: 13px;
+    text-align: center;
+}
+
+/* ACTION BUTTONS */
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-save {
+    flex: 1;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.btn-save:hover {
+    transform: translateY(-1px);
+}
+
+.btn-cancel {
+    flex: 1;
+    background: #f3f4f6;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* ===== PASSWORD ICON ===== */
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 40px;
+}
+
+.password-wrapper span {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.password-wrapper span:hover {
+    opacity: 1;
+}
+
+/* ===== ANIMATION ===== */
+@keyframes scaleUp {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }

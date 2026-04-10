@@ -6,6 +6,7 @@ import com.example.quanlycafe.entity.TaiKhoan;
 import com.example.quanlycafe.repository.NhanVienRepository;
 import com.example.quanlycafe.repository.TaiKhoanRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -125,10 +126,44 @@ public class AuthService {
             throw new RuntimeException("Mã OTP không chính xác hoặc đã hết hạn");
         }
 
-        tk.setMatKhau(passwordEncoder.encode(newPass)); // Mã hóa mật khẩu mới
-        tk.setOTP(null); // Xóa OTP sau khi dùng thành công
-        taiKhoanRepository.save(tk);
+        tk.setMatKhau(passwordEncoder.encode(newPass));
+        tk.setOTP(null);
 
         return "Đổi mật khẩu thành công.";
     }
+    @Transactional
+    public String changePassword(String oldPassword, String newPassword) {
+
+        // 1. Lấy username từ SecurityContext (KHÔNG cần token nữa)
+        String username = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        // 2. Tìm tài khoản
+        TaiKhoan tk = taiKhoanRepository.findByTenDangNhap(username)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản"));
+
+        // 3. Check mật khẩu cũ
+        if (!passwordEncoder.matches(oldPassword, tk.getMatKhau())) {
+            throw new RuntimeException("Mật khẩu cũ không đúng");
+        }
+
+        // 4. Validate mật khẩu mới
+        if (newPassword == null || newPassword.length() < 6) {
+            throw new RuntimeException("Mật khẩu mới phải >= 6 ký tự");
+        }
+
+        // 5. Không trùng mật khẩu cũ
+        if (passwordEncoder.matches(newPassword, tk.getMatKhau())) {
+            throw new RuntimeException("Mật khẩu mới không được trùng mật khẩu cũ");
+        }
+
+        // 6. Update
+        tk.setMatKhau(passwordEncoder.encode(newPassword));
+        taiKhoanRepository.save(tk);
+
+        return "Đổi mật khẩu thành công";
+    }
+
 }

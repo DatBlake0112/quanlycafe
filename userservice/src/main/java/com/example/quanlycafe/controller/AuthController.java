@@ -81,4 +81,18 @@
                 return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
             }
         }
+        @PostMapping("/change-password")
+        public ResponseEntity<?> changePassword(
+                @RequestBody Map<String, String> request
+        ) {
+            try {
+                String oldPass = request.get("oldPassword");
+                String newPass = request.get("newPassword");
+
+                String result = authService.changePassword(oldPass, newPass);
+                return ResponseEntity.ok(Map.of("message", result));
+            } catch (RuntimeException e) {
+                return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            }
+        }
     }
