@@ -50,6 +50,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/register").hasRole("ADMIN")
                         .requestMatchers("/api/auth/change-password").authenticated()
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/nhan-vien/me").hasAnyRole("STAFF", "ADMIN")
                         .requestMatchers("/api/nhan-vien/**").hasAnyRole("ADMIN","STAFF")
                         .anyRequest().authenticated()

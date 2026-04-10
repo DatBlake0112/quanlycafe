@@ -97,8 +97,12 @@ function SalaryManagement() {
         if (window.confirm(`Xác nhận thanh toán cho nhân viên này?`)) {
             try {
                 // Sửa API thanh toán theo nhân viên và kỳ lương
+                const token = localStorage.getItem("token");
                 await axios.put(`http://localhost:8082/api/salary/pay/${maNV}`, null, {
-                    params: { thang: filter.thang, nam: filter.nam }
+                    params: { thang: filter.thang, nam: filter.nam },
+                    headers: {
+                        Authorization: `Bearer ${token}` // Gửi kèm token
+                    }
                 });
                 alert("Thanh toán thành công!");
                 loadData();
@@ -109,11 +113,19 @@ function SalaryManagement() {
     const handleTinhLuongDongLoat = async () => {
         setLoading(true);
         try {
+            const token = localStorage.getItem("token");
             const data = { thang: parseInt(filter.thang), nam: parseInt(filter.nam) };
-            await axios.post(`http://localhost:8082/api/salary/calculate-all`, data);
+            await axios.post(`http://localhost:8082/api/salary/calculate-all`, data,{
+                headers: {
+                    Authorization: `Bearer ${token}` // Gửi kèm token
+                }
+            });
             alert("Đã tổng hợp lương thành công!");
             loadData();
-        } catch (error) { alert("Lỗi tính lương!"); }
+        } catch (error) {
+            const message = error.response?.data || "Lỗi tính lương!";
+            alert(message);
+        }
         finally { setLoading(false); }
     };
 
@@ -121,6 +133,7 @@ function SalaryManagement() {
     const handleAddAdjustment = async () => {
         if (!newAdj.soTien || !newAdj.ghiChu) return alert("Nhập đủ tiền và lý do!");
         try {
+            const token = localStorage.getItem("token");
             await axios.post("http://localhost:8082/api/salary/create", {
                 maNhanVien: selectedItem.maNhanVien,
                 loaiPhieu: newAdj.loaiPhieu,
@@ -128,11 +141,17 @@ function SalaryManagement() {
                 thang: filter.thang,
                 nam: filter.nam,
                 ghiChu: newAdj.ghiChu
+            },{
+                headers: {
+                    Authorization: `Bearer ${token}` // Gửi kèm token
+                }
             });
             alert("Đã thêm điều chỉnh!");
             setNewAdj({ loaiPhieu: 'THUONG', soTien: '', ghiChu: '' });
             loadData();
-        } catch { alert("Lỗi khi thêm!"); }
+        } catch { alert("Chỉ có thể có tối đa 1 phiếu lương và 1 phiếu phạt!");
+            setNewAdj({ loaiPhieu: 'THUONG', soTien: '', ghiChu: '' });
+        }
     };
 
     return (
@@ -141,7 +160,7 @@ function SalaryManagement() {
                 <div className="stat-card blue"><span>Tổng Lương Dự Kiến</span><h3>{stats.tongLuong.toLocaleString()} đ</h3></div>
                 <div className="stat-card orange"><span>Tổng Thưởng 🟨</span><h3>{stats.tongThuong.toLocaleString()} đ</h3></div>
                 <div className="stat-card red"><span>Tổng Khấu trừ 🟥</span><h3>{stats.tongKhauTru.toLocaleString()} đ</h3></div>
-                <div className="stat-card gray"><span>NV Chưa tính lương</span><h3>{stats.nvCount}</h3></div>
+                <div className="stat-card gray"><span>NV Chưa thanh toán</span><h3>{stats.nvCount}</h3></div>
             </div>
 
             <div className="salary-content">
