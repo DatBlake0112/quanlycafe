@@ -29,7 +29,7 @@ const Profile = () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const res = await axios.get("http://localhost:8081/api/nhan-vien/me", {
+                const res = await axios.get("http://localhost:8086/api/nhan-vien/me", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setUser(res.data);
@@ -47,7 +47,7 @@ const Profile = () => {
                 if (!user?.maNhanVien) return;
 
                 const [year, month] = selectedMonth.split("-");
-                const res = await axios.get("http://localhost:8082/api/cham-cong/history", {
+                const res = await axios.get("http://localhost:8085/api/cham-cong/history", {
                     params: {
                         maNV: user.maNhanVien,
                         month: parseInt(month),
@@ -76,7 +76,7 @@ const Profile = () => {
         setPwdLoading(true);
         try {
             await axios.post(
-                "http://localhost:8081/api/auth/change-password",
+                "http://localhost:8086/api/auth/change-password",
                 {
                     oldPassword: pwdData.oldPassword,
                     newPassword: pwdData.newPassword

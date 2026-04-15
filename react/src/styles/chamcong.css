@@ -1,73 +1,104 @@
+:root {
+    --indigo-600: #4f46e5;
+    --indigo-700: #4338ca;
+    --indigo-50: #eef2ff;
+    --slate-900: #0f172a;
+    --slate-800: #1e293b;
+    --slate-600: #475569;
+    --slate-400: #94a3b8;
+    --slate-200: #e2e8f0;
+    --slate-100: #f1f5f9;
+    --slate-50: #f8fafc;
+    --white: #ffffff;
+    --success: #10b981;
+    --danger: #ef4444;
+}
+
 /* ===== CONTAINER ===== */
 .cc-container {
     display: flex;
-    gap: 24px;
-    padding: 30px;
-    background: linear-gradient(135deg, #eef2ff, #f8fafc);
+    gap: 32px;
+    padding: 32px;
+    background-color: var(--slate-50);
     min-height: 100vh;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     justify-content: center;
+    animation: fadeIn 0.4s ease-out;
 }
 
-/* ===== CARD ===== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== CARD CHUNG ===== */
 .cc-card {
-    background: rgba(255,255,255,0.9);
-    border-radius: 18px;
-    padding: 26px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    backdrop-filter: blur(6px);
-    transition: 0.25s;
+    background: var(--white);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--slate-100);
 }
 
-.cc-card:hover {
-    transform: translateY(-3px);
-}
-
-/* ===== LAYOUT ===== */
-.cc-left { flex: 1.5; max-width: 520px; }
+.cc-left { flex: 1.6; max-width: 600px; }
 .cc-right {
     flex: 1;
-    max-width: 360px;
+    max-width: 380px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* ===== HEADER ===== */
+/* ===== LỊCH TRÌNH (BÊN TRÁI) ===== */
 .cc-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
+    align-items: flex-start;
+    margin-bottom: 24px;
 }
 
 .cc-title {
-    font-size: 1.25rem;
-    margin: 0;
-    font-weight: 700;
-    color: #111827;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--slate-900);
+    margin-bottom: 8px;
 }
 
 .cc-badge {
-    background: #e0e7ff;
-    color: #4f46e5;
-    padding: 5px 12px;
+    background: var(--indigo-50);
+    color: var(--indigo-600);
+    padding: 6px 14px;
     border-radius: 20px;
-    font-weight: 600;
-    font-size: 0.8rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: inline-block;
 }
 
-/* ===== CALENDAR ===== */
+.cc-filters select {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--slate-200);
+    background: var(--white);
+    font-weight: 600;
+    color: var(--slate-700);
+    outline: none;
+    cursor: pointer;
+}
+
+/* CALENDAR GRID */
 .cc-calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
+    gap: 12px;
+    margin-bottom: 24px;
 }
 
 .cc-dow {
     text-align: center;
-    color: #9ca3af;
+    color: var(--slate-400);
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .cc-day {
@@ -75,139 +106,291 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
+    border-radius: 14px;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 600;
     position: relative;
-    background: #f9fafb;
-    transition: 0.2s;
+    background: var(--slate-50);
+    color: var(--slate-600);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .cc-day:hover {
-    background: #eef2ff;
+    background: var(--slate-100);
+    color: var(--slate-900);
 }
 
-/* trạng thái */
+.cc-day:active {
+    transform: scale(0.92);
+}
+
+/* --- CHỈNH SỬA KHU VỰC NÀY --- */
+
+/* 1. Ngày đã làm việc bình thường (Màu xanh) */
 .cc-day.is-active {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    color: white;
-    box-shadow: 0 4px 12px rgba(34,197,94,0.4);
+    background: #5bf183 !important;
+    color: #065f46 !important;
+    border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
+/* Ngày bị lỗi (Quên tan ca) - Màu đỏ */
+.cc-day.is-error {
+    background-color: #fee2e2 !important; /* Màu đỏ nhạt */
+    color: #ef4444 !important;           /* Chữ đỏ */
+    border: 1px solid #fecaca !important; /* Viền đỏ */
+}
+
+/* Ép cái chấm nhỏ cũng màu đỏ */
+.cc-day.is-error .cc-dot {
+    background-color: #ef4444 !important;
+}
+
+/* 3. Ngày đang được chọn (Viền Indigo) */
 .cc-day.is-selected {
-    border: 2px solid #6366f1;
-    background: #eef2ff;
-    color: #4f46e5;
+    border: 2px solid var(--indigo-600) !important;
+    background: var(--indigo-50);
+    color: var(--indigo-600);
 }
 
-.cc-day.is-active.is-selected {
-    background: linear-gradient(135deg, #16a34a, #15803d);
+/* Khi chọn vào ô lỗi thì viền đỏ thay vì viền xanh */
+.cc-day.is-error.is-selected {
+    border: 2px solid #ff4d4f !important;
+    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
 }
 
-/* dot */
+/* --- GIỮ NGUYÊN TOÀN BỘ PHẦN CÒN LẠI --- */
+
 .cc-dot {
     position: absolute;
-    bottom: 5px;
-    width: 5px;
-    height: 5px;
-    background: currentColor;
+    bottom: 6px;
+    width: 4px;
+    height: 4px;
+    background: var(--success);
     border-radius: 50%;
 }
 
-/* ===== DETAIL ===== */
-.cc-detail {
-    margin-top: 20px;
-}
-
+/* DETAIL BOX */
 .cc-detail-box {
-    background: #f9fafb;
-    padding: 12px;
-    border-radius: 10px;
+    background: var(--slate-50);
+    padding: 16px;
+    border-radius: 14px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--slate-100);
 }
 
-.cc-hint {
-    text-align: center;
-    color: #9ca3af;
-    font-size: 0.9rem;
+.cc-detail-box strong {
+    color: var(--indigo-600);
+    font-size: 1.1rem;
 }
 
-/* ===== USER ===== */
+/* ===== BẢNG ĐIỀU KHIỂN (BÊN PHẢI) ===== */
 .cc-user {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
     width: 100%;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #eee;
-    margin-bottom: 25px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--slate-100);
+    margin-bottom: 32px;
 }
 
 .cc-avatar {
-    font-size: 1.5rem;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    width: 54px;
+    height: 54px;
+    background: linear-gradient(135deg, var(--indigo-600), #8b5cf6);
     color: white;
-    padding: 10px;
-    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    font-size: 1.4rem;
+    box-shadow: 0 8px 16px -4px rgba(79, 70, 229, 0.4);
 }
 
-.cc-user h4 {
-    margin: 0;
-    font-weight: 700;
+.cc-user h4 { color: var(--slate-900); font-size: 1.1rem; margin-bottom: 2px; }
+.cc-user p { color: var(--slate-400); font-size: 0.85rem; font-weight: 500; }
+
+/* TIMER */
+.cc-timer {
+    text-align: center;
+    margin-bottom: 40px;
 }
 
-.cc-user p {
-    margin: 0;
-    font-size: 0.8rem;
-    color: #6b7280;
-}
-
-/* ===== CLOCK ===== */
 .cc-clock {
-    font-size: 3.2rem;
-    font-weight: bold;
-    font-family: monospace;
-    color: #111827;
-    margin-bottom: 10px;
+    font-size: 3.5rem;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace; /* Nhìn cho giống đồng hồ kỹ thuật số */
+    color: var(--slate-900);
+    letter-spacing: -2px;
+    margin-bottom: 12px;
 }
 
-/* ===== STATUS ===== */
 .cc-status {
-    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
     font-size: 0.85rem;
-    margin-bottom: 30px;
-    color: #ef4444;
+    padding: 6px 16px;
+    border-radius: 20px;
+    background: #fee2e2;
+    color: var(--danger);
 }
 
 .cc-status.working {
-    color: #16a34a;
+    background: #d1fae5;
+    color: var(--success);
 }
 
-/* ===== BUTTON ===== */
+/* BUTTON */
 .cc-btn {
     width: 100%;
-    padding: 15px;
-    border-radius: 12px;
+    padding: 18px;
+    border-radius: 16px;
     border: none;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 1rem;
     cursor: pointer;
     color: white;
-    transition: 0.25s;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-/* start */
+.cc-btn:active {
+    transform: scale(0.96);
+}
+
 .btn-start {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    background: var(--indigo-600);
+    box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
 }
 
-/* stop */
 .btn-stop {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
+    background: var(--danger);
+    box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.4);
 }
 
 .cc-btn:hover {
+    filter: brightness(1.1);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+/* Trạng thái bên trái */
+/* ===== STATUS BADGE (ĐẸP HƠN) ===== */
+.status-badge {
+    margin-top: 8px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.3px;
+    transition: all 0.2s ease;
+}
+
+/* Thành công */
+.status-badge.success {
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    color: #059669;
+    border: 1px solid #a7f3d0;
+}
+
+/* Lỗi */
+.status-badge.error {
+    background: linear-gradient(135deg, #fff1f2, #ffe4e6);
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+}
+
+/* Không có dữ liệu */
+.status-badge.none {
+    background: #f8fafc;
+    color: #94a3b8;
+    border: 1px dashed #e2e8f0;
+}
+
+/* Hover nhẹ cho badge */
+.status-badge:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+}
+
+
+/* ===== FIX SECTION (NÂNG CẤP UI) ===== */
+.cc-fix-section {
+    margin-top: 18px;
+    text-align: left;
+    padding: 14px;
+    background: linear-gradient(135deg, #fff7e6, #fff1cc);
+    border-radius: 12px;
+    border: 1px dashed #fbbf24;
+    animation: fadeInFix 0.3s ease;
+}
+
+@keyframes fadeInFix {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.cc-fix-section h4 {
+    font-size: 13px;
+    color: #d97706;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+/* Input + Button */
+.fix-input-group {
+    display: flex;
+    gap: 8px;
+}
+
+/* Input đẹp hơn */
+.fix-input-group input {
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px solid #fcd34d;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 13px;
+    outline: none;
+    transition: 0.2s;
+    color: black;
+}
+
+.fix-input-group input:focus {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+}
+
+/* Button xịn hơn */
+.fix-input-group button {
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: rgb(0, 0, 0);
+    border: none;
+    padding: 0 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.fix-input-group button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px -4px rgba(249, 115, 22, 0.5);
+}
+
+.fix-input-group button:active {
+    transform: scale(0.95);
+}
+
+.fix-input-group button:disabled {
+    background: #fde68a;
+    cursor: not-allowed;
+    box-shadow: none;
 }

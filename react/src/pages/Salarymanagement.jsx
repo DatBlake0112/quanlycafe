@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 import "../styles/salary.css";
 
 function SalaryManagement() {
@@ -12,16 +14,14 @@ function SalaryManagement() {
     const [showModal, setShowModal] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
 
-    // THÊM STATE CHO FORM ĐIỀU CHỈNH NHANH
+    // Form điều chỉnh nhanh
     const [newAdj, setNewAdj] = useState({ loaiPhieu: 'THUONG', soTien: '', ghiChu: '' });
 
     const loadEmployeeNames = async () => {
         try {
-            const token = localStorage.getItem("token"); // Lấy token đã lưu khi login
-            const res = await axios.get("http://localhost:8081/api/nhan-vien", {
-                headers: {
-                    Authorization: `Bearer ${token}` // Gửi kèm token
-                }
+            const token = localStorage.getItem("token");
+            const res = await axios.get("http://localhost:8086/api/nhan-vien", {
+                headers: { Authorization: `Bearer ${token}` }
             });
             const nameMap = {};
             res.data.forEach(emp => { nameMap[emp.maNhanVien] = emp.tenNhanVien; });
@@ -32,11 +32,9 @@ function SalaryManagement() {
     const loadData = useCallback(async () => {
         try {
             const token = localStorage.getItem("token");
-            const res = await axios.get(`http://localhost:8082/api/salary/all`, {
+            const res = await axios.get(`http://localhost:8085/api/salary/all`, {
                 params: { thang: filter.thang, nam: filter.nam },
-                headers: {
-                    Authorization: `Bearer ${token}` // Gửi kèm token
-                }
+                headers: { Authorization: `Bearer ${token}` }
             });
             setSalaryData(res.data);
         } catch (error) { console.error("Lỗi tải dữ liệu lương:", error); }
@@ -75,8 +73,7 @@ function SalaryManagement() {
                 luongDuKien: 0,
                 thuong: 0,
                 phat: 0,
-                trangThai: item.trangThaiLuong,
-                maPhieu: item.maPhieu
+                trangThai: item.trangThaiLuong
             };
         }
 
@@ -96,13 +93,10 @@ function SalaryManagement() {
     const handleThanhToan = async (maNV) => {
         if (window.confirm(`Xác nhận thanh toán cho nhân viên này?`)) {
             try {
-                // Sửa API thanh toán theo nhân viên và kỳ lương
                 const token = localStorage.getItem("token");
-                await axios.put(`http://localhost:8082/api/salary/pay/${maNV}`, null, {
+                await axios.put(`http://localhost:8085/api/salary/pay/${maNV}`, null, {
                     params: { thang: filter.thang, nam: filter.nam },
-                    headers: {
-                        Authorization: `Bearer ${token}` // Gửi kèm token
-                    }
+                    headers: { Authorization: `Bearer ${token}` }
                 });
                 alert("Thanh toán thành công!");
                 loadData();
@@ -115,26 +109,21 @@ function SalaryManagement() {
         try {
             const token = localStorage.getItem("token");
             const data = { thang: parseInt(filter.thang), nam: parseInt(filter.nam) };
-            await axios.post(`http://localhost:8082/api/salary/calculate-all`, data,{
-                headers: {
-                    Authorization: `Bearer ${token}` // Gửi kèm token
-                }
+            await axios.post(`http://localhost:8085/api/salary/calculate-all`, data,{
+                headers: { Authorization: `Bearer ${token}` }
             });
             alert("Đã tổng hợp lương thành công!");
             loadData();
         } catch (error) {
-            const message = error.response?.data || "Lỗi tính lương!";
-            alert(message);
-        }
-        finally { setLoading(false); }
+            alert(error.response?.data || "Lỗi tính lương!");
+        } finally { setLoading(false); }
     };
 
-    // HÀM XỬ LÝ THÊM ĐIỀU CHỈNH NHANH
     const handleAddAdjustment = async () => {
         if (!newAdj.soTien || !newAdj.ghiChu) return alert("Nhập đủ tiền và lý do!");
         try {
             const token = localStorage.getItem("token");
-            await axios.post("http://localhost:8082/api/salary/create", {
+            await axios.post("http://localhost:8085/api/salary/create", {
                 maNhanVien: selectedItem.maNhanVien,
                 loaiPhieu: newAdj.loaiPhieu,
                 soTien: parseFloat(newAdj.soTien),
@@ -142,16 +131,65 @@ function SalaryManagement() {
                 nam: filter.nam,
                 ghiChu: newAdj.ghiChu
             },{
-                headers: {
-                    Authorization: `Bearer ${token}` // Gửi kèm token
-                }
+                headers: { Authorization: `Bearer ${token}` }
             });
             alert("Đã thêm điều chỉnh!");
             setNewAdj({ loaiPhieu: 'THUONG', soTien: '', ghiChu: '' });
-            loadData();
-        } catch { alert("Chỉ có thể có tối đa 1 phiếu lương và 1 phiếu phạt!");
-            setNewAdj({ loaiPhieu: 'THUONG', soTien: '', ghiChu: '' });
-        }
+            await loadData(); // Kích hoạt cập nhật lại salaryData để Modal nhận số mới
+        } catch { alert("Lỗi khi thêm điều chỉnh!"); }
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setSelectedItem(null);
+        // Xóa sạch dữ liệu input trong form điều chỉnh
+        setNewAdj({ loaiPhieu: 'THUONG', soTien: '', ghiChu: '' });
+    };
+
+    const handleExportExcel = async () => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet(`Lương Tháng ${filter.thang}`);
+
+        worksheet.columns = [
+            { header: 'Mã NV', key: 'maNV', width: 12 },
+            { header: 'Họ và Tên', key: 'hoTen', width: 25 },
+            { header: 'Số giờ làm', key: 'gioLam', width: 12 },
+            { header: 'Lương dự kiến (đ)', key: 'luong', width: 20 },
+            { header: 'Thưởng (đ)', key: 'thuong', width: 15 },
+            { header: 'Khấu trừ (đ)', key: 'phat', width: 15 },
+            { header: 'Thực nhận (đ)', key: 'thucNhan', width: 22 },
+            { header: 'Trạng thái', key: 'status', width: 15 },
+        ];
+
+        displayData.forEach(emp => {
+            const thucNhanVal = emp.luongDuKien + emp.thuong - emp.phat;
+            const row = worksheet.addRow({
+                maNV: emp.maNhanVien,
+                hoTen: emp.hoTen,
+                gioLam: emp.soGioLam.toFixed(1),
+                luong: emp.luongDuKien,
+                thuong: emp.thuong,
+                phat: emp.phat,
+                thucNhan: thucNhanVal,
+                status: emp.trangThai
+            });
+            row.getCell('thucNhan').font = { bold: true, color: { argb: 'FF0000FF' } };
+        });
+
+        worksheet.getRow(1).eachCell((cell) => {
+            cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '4F81BD' } };
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        });
+
+        worksheet.eachRow((row) => {
+            row.eachCell((cell) => {
+                cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+            });
+        });
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        saveAs(new Blob([buffer]), `Bang_Luong_Thang_${filter.thang}_${filter.nam}.xlsx`);
     };
 
     return (
@@ -173,6 +211,9 @@ function SalaryManagement() {
                         <input type="text" placeholder="Tìm kiếm..." className="search-input" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                     </div>
                     <div className="button-group">
+                        <button className="btn-export" onClick={handleExportExcel} style={{backgroundColor: '#27ae60', color: 'white', marginRight: '10px'}}>
+                            XUẤT EXCEL 📊
+                        </button>
                         <button className="btn-primary" onClick={handleTinhLuongDongLoat} disabled={loading}>{loading ? "ĐANG XỬ LÝ..." : "TÍNH LƯƠNG ĐỒNG LOẠT"}</button>
                     </div>
                 </div>
@@ -185,64 +226,73 @@ function SalaryManagement() {
                         </tr>
                         </thead>
                         <tbody>
-                        {displayData.map((emp, index) => {
-                            const giaTriThucNhan = emp.luongDuKien + emp.thuong - emp.phat;
-                            return (
-                                <tr key={index}>
-                                    <td>{emp.maNhanVien}</td>
-                                    <td><strong>{emp.hoTen}</strong></td>
-                                    <td>{emp.soGioLam.toFixed(1)} giờ</td>
-                                    <td className="text-bold">{emp.luongDuKien.toLocaleString()} đ</td>
-                                    <td className="text-bold text-primary">{giaTriThucNhan.toLocaleString()} đ</td>
-                                    <td><span className={`status-badge ${emp.trangThai === 'Đã thanh toán' ? 'paid' : 'unpaid'}`}>{emp.trangThai}</span></td>
-                                    <td>
-                                        <div className="action-buttons-group">
-                                            <button className="btn-action detail" onClick={() => {setSelectedItem(emp); setShowModal(true)}} disabled={emp.trangThai === 'Đã thanh toán'}>CHI TIẾT</button>
-                                            <button className="btn-action pay" onClick={() => handleThanhToan(emp.maNhanVien)} disabled={emp.trangThai === 'Đã thanh toán'}>THANH TOÁN</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            );
-                        })}
+                        {displayData.map((emp, index) => (
+                            <tr key={index}>
+                                <td>{emp.maNhanVien}</td>
+                                <td><strong>{emp.hoTen}</strong></td>
+                                <td>{emp.soGioLam.toFixed(1)} giờ</td>
+                                <td className="text-bold">{emp.luongDuKien.toLocaleString()} đ</td>
+                                <td className="text-bold text-primary">{(emp.luongDuKien + emp.thuong - emp.phat).toLocaleString()} đ</td>
+                                <td><span className={`status-badge ${emp.trangThai === 'Đã thanh toán' ? 'paid' : 'unpaid'}`}>{emp.trangThai}</span></td>
+                                <td>
+                                    <div className="action-buttons-group">
+                                        <button className="btn-action detail" onClick={() => {setSelectedItem(emp); setShowModal(true)}}>CHI TIẾT</button>
+                                        <button className="btn-action pay" onClick={() => handleThanhToan(emp.maNhanVien)} disabled={emp.trangThai === 'Đã thanh toán'}>THANH TOÁN</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            {/* MODAL CHI TIẾT HOÀN CHỈNH THEO MẪU */}
+            {/* MODAL CHI TIẾT THEO CÁCH 2 - TÍNH TOÁN TRỰC TIẾP TỪ SALARYDATA */}
             {showModal && selectedItem && (() => {
-                const detailList = salaryData.filter(item => item.maNhanVien === selectedItem.maNhanVien && item.thang === filter.thang);
-                const luongCoBanGio = (selectedItem.soGioLam > 0) ? (selectedItem.luongDuKien / selectedItem.soGioLam) : 0;
-                const thucNhanVal = selectedItem.luongDuKien + selectedItem.thuong - selectedItem.phat;
-                const tongDieuChinh = selectedItem.thuong - selectedItem.phat;
+                // Lấy tất cả bản ghi mới nhất của nhân viên này từ salaryData
+                const currentRecords = salaryData.filter(item => item.maNhanVien === selectedItem.maNhanVien && item.thang === filter.thang);
+
+                // Tách riêng bản ghi lương để lấy giờ làm và tiền gốc
+                const luongRow = currentRecords.find(r => r.loaiPhieu === 'LUONG') || { soGioLam: 0, soTien: 0 };
+                const adjList = currentRecords.filter(i => i.loaiPhieu !== 'LUONG');
+
+                const luongCoBanGio = (luongRow.soGioLam > 0) ? (luongRow.soTien / luongRow.soGioLam) : 0;
+                const tongThuongVal = adjList.filter(i => i.loaiPhieu === 'THUONG').reduce((s, i) => s + i.soTien, 0);
+                const tongPhatVal = adjList.filter(i => i.loaiPhieu === 'PHAT').reduce((s, i) => s + i.soTien, 0);
+
+                const tongDieuChinh = tongThuongVal - tongPhatVal;
+                const thucNhanVal = luongRow.soTien + tongDieuChinh;
 
                 return (
                     <div className="modal-overlay">
                         <div className="modal-content large-modal">
                             <div className="modal-header">
                                 <h2>CHI TIẾT PHIẾU LƯƠNG: {selectedItem.hoTen} ({selectedItem.maNhanVien}) - Tháng {filter.thang < 10 ? `0${filter.thang}` : filter.thang}/{filter.nam}</h2>
-                                <button className="close-btn" onClick={() => setShowModal(false)}>&times;</button>
+                                <button className="close-btn" onClick={handleCloseModal}>&times;</button>
                             </div>
                             <div className="modal-body">
                                 <fieldset className="salary-fieldset">
                                     <legend>[TÓM TẮT CÔNG VIỆC]</legend>
-                                    <div className="summary-row">Tổng thời gian làm việc: <strong>{selectedItem.soGioLam.toFixed(1)} giờ</strong></div>
+                                    <div className="summary-row">Tổng thời gian làm việc: <strong>{luongRow.soGioLam.toFixed(1)} giờ</strong></div>
                                     <div className="summary-row">Mức lương cơ bản/giờ: <strong>{luongCoBanGio.toLocaleString()} đ</strong></div>
-                                    <div className="summary-row text-bold">=&gt; Thành tiền (Lương giờ): {selectedItem.luongDuKien.toLocaleString()} đ</div>
+                                    <div className="summary-row text-bold">=&gt; Thành tiền (Lương giờ): {luongRow.soTien.toLocaleString()} đ</div>
                                 </fieldset>
 
                                 <fieldset className="salary-fieldset">
                                     <legend>[DANH SÁCH THƯỞNG / KHẤU TRỪ]</legend>
                                     <table className="adjustment-table">
-                                        <thead><tr><th>Loại</th><th>Số tiền</th><th>Ghi chú</th></tr></thead>
+                                        <thead><tr><th>Loại</th><th>Số tiền</th><th>Ngày tạo</th><th>Ghi chú</th></tr></thead>
                                         <tbody>
-                                        {detailList.filter(i => i.loaiPhieu !== 'LUONG').map((adj, idx) => (
+                                        {adjList.length > 0 ? adjList.map((adj, idx) => (
                                             <tr key={idx}>
                                                 <td className={adj.loaiPhieu === 'THUONG' ? 'text-success' : 'text-danger'}>{adj.loaiPhieu === 'THUONG' ? 'THƯỞNG (+)' : 'PHẠT (-)'}</td>
                                                 <td className="text-bold">{adj.loaiPhieu === 'THUONG' ? '+' : '-'} {adj.soTien.toLocaleString()} đ</td>
+                                                <td className="text-muted">{new Date(adj.ngayTao).toLocaleDateString('vi-VN')}</td>
                                                 <td className="text-muted">{adj.ghiChu || "..."}</td>
                                             </tr>
-                                        ))}
+                                        )) : (
+                                            <tr><td colSpan="4" style={{textAlign: 'center', color: '#999'}}>Chưa có thưởng/phạt</td></tr>
+                                        )}
                                         </tbody>
                                     </table>
                                     <div className={`total-adjustment ${tongDieuChinh >= 0 ? 'text-success' : 'text-danger'}`}>
@@ -252,7 +302,6 @@ function SalaryManagement() {
 
                                 <div className="final-payment">THỰC NHẬN CUỐI CÙNG: <h3>{thucNhanVal.toLocaleString()} đ</h3></div>
 
-                                {/* KHUNG THÊM ĐIỀU CHỈNH NHANH */}
                                 <fieldset className="salary-fieldset">
                                     <legend>[THÊM ĐIỀU CHỈNH NHANH]</legend>
                                     <div className="add-adj-form">
@@ -272,7 +321,9 @@ function SalaryManagement() {
                                     </div>
                                 </fieldset>
                             </div>
-                            <div className="modal-footer"><button className="btn-secondary" onClick={() => setShowModal(false)}>ĐÓNG</button></div>
+                            <div className="modal-footer">
+                                <button className="btn-secondary" onClick={handleCloseModal}>ĐÓNG</button>
+                            </div>
                         </div>
                     </div>
                 );

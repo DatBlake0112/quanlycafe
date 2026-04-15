@@ -18,5 +18,7 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, String> {
 
     @Query("SELECT nv FROM NhanVien nv JOIN nv.taiKhoan tk WHERE tk.tenDangNhap = :username")
     Optional<NhanVien> findByUsernameFromAccount(@Param("username") String username);
+    List<NhanVien> findByTrangThai(String trangThai);
+
 
 }

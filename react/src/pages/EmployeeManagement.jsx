@@ -23,7 +23,7 @@ function EmployeeManagement() {
         if (!token) return;
         try {
             const res = await axios.get(
-                `http://localhost:8081/api/nhan-vien`, // Gọi cổng 8081
+                `http://localhost:8086/api/nhan-vien`, // Gọi cổng 8086
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setEmployees(res.data);
@@ -57,7 +57,7 @@ function EmployeeManagement() {
     const handleUpdate = async () => {
         if (!formData.maNhanVien) return alert("Vui lòng chọn nhân viên từ bảng!");
         try {
-            await axios.put(`http://localhost:8081/api/nhan-vien/${formData.maNhanVien}`, formData,
+            await axios.put(`http://localhost:8086/api/nhan-vien/${formData.maNhanVien}`, formData,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             alert("Cập nhật thành công!");
@@ -75,7 +75,7 @@ function EmployeeManagement() {
         try {
             // Không gửi kèm thuongHieu nữa
             await axios.post(
-                `http://localhost:8081/api/nhan-vien`,
+                `http://localhost:8086/api/nhan-vien`,
                 formData,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -86,6 +86,26 @@ function EmployeeManagement() {
         } catch (error) {
             console.error("Lỗi khi thêm:", error);
             alert("Lỗi: " + (error.response?.data || "Không thể thêm nhân viên."));
+        }
+    };
+    const handleDelete = async () => {
+        if (!selectedRowId) return alert("Vui lòng chọn nhân viên cần xóa!");
+
+        const confirmDelete = window.confirm(`Xác nhận xóa nhân viên [${formData.tenNhanVien}]?`);
+        if (confirmDelete) {
+            try {
+                // Gửi request delete kèm token để backend thực hiện check history bên Salary Service
+                await axios.delete(`http://localhost:8086/api/nhan-vien/${selectedRowId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                alert("Thao tác thành công! Nhân viên đã được xóa vĩnh viễn hoặc chuyển trạng thái nghỉ việc.");
+                loadEmployees();
+                handleReset();
+            } catch (error) {
+                console.error("Lỗi khi xóa:", error);
+                alert("Lỗi: Không thể thực hiện thao tác xóa.");
+            }
         }
     };
 
@@ -139,7 +159,7 @@ function EmployeeManagement() {
                 <div className="button-group">
                     <button className="btn-add" onClick={handleAdd}>Thêm</button>
                     <button className="btn-edit" onClick={handleUpdate}>Sửa</button>
-                    <button className="btn-delete" >Xóa</button>
+                    <button className="btn-delete" onClick={handleDelete} >Xóa</button>
                     <button className="btn-reset" onClick={handleReset}>Làm mới</button>
                 </div>
             </div>

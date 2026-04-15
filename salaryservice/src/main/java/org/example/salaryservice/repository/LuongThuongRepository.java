@@ -12,6 +12,6 @@ public interface LuongThuongRepository extends JpaRepository<LuongThuong, String
 
     // Tìm chi tiết phiếu của 1 nhân viên trong tháng
     List<LuongThuong> findByMaNhanVienAndThangAndNam(String maNV, Integer thang, Integer nam);
-//    boolean existsByMaChamCong(String maChamCong);
     boolean existsByMaNhanVienAndThangAndNamAndLoaiPhieu(String maNV, Integer thang, Integer nam, String loaiPhieu);
+    boolean existsByMaNhanVien(String maNhanVien);
 }

@@ -2,6 +2,8 @@ package org.example.salaryservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.salaryservice.entity.LuongThuong;
+import org.example.salaryservice.repository.ChamCongRepository;
+import org.example.salaryservice.repository.LuongThuongRepository;
 import org.example.salaryservice.service.LuongThuongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,8 @@ public class LuongThuongController {
 
     @Autowired
     private LuongThuongService service;
+    private ChamCongRepository chamCongRepo;
+    private LuongThuongRepository luongThuongRepo;
 
     @GetMapping("/all")
     public List<LuongThuong> getAll(@RequestParam Integer thang, @RequestParam Integer nam) {
@@ -76,5 +80,11 @@ public class LuongThuongController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Lỗi khi lưu điều chỉnh: " + e.getMessage());
         }
+    }
+    @GetMapping("/check-history/{maNV}")
+    public ResponseEntity<Boolean> checkHistory(@PathVariable String maNV) {
+        boolean hasHistory = chamCongRepo.existsByMaNhanVien(maNV)
+                || luongThuongRepo.existsByMaNhanVien(maNV);
+        return ResponseEntity.ok(hasHistory);
     }
 }

@@ -17,4 +17,5 @@ public interface TaiKhoanRepository extends JpaRepository<TaiKhoan, String> {
     // Thêm hàm này để IdGeneratorService có thể lấy mã tài khoản lớn nhất (ví dụ: TK0005)
     @Query("SELECT MAX(t.maTaiKhoan) FROM TaiKhoan t")
     Optional<String> findMaxMaTK();
+    Optional<TaiKhoan> findByNhanVienMaNhanVien(String maNhanVien);
 }

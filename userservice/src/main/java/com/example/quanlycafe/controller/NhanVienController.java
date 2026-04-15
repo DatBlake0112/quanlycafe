@@ -34,9 +34,12 @@ public class NhanVienController {
     }
 
     @DeleteMapping("/{maNhanVien}")
-    public ResponseEntity<?> delete(@PathVariable String maNhanVien) {
-        nhanVienService.delete(maNhanVien);
-        return ResponseEntity.ok("Da xoa nhan vien");
+    public ResponseEntity<?> delete(
+            @PathVariable String maNhanVien,
+            @RequestHeader("Authorization") String token // Lấy token từ Header
+    ) {
+        nhanVienService.delete(maNhanVien, token);
+        return ResponseEntity.ok("Thao tác thành công");
     }
 
     @GetMapping("/exists/{maNhanVien}")

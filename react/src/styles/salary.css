@@ -66,6 +66,7 @@
     outline: none;
     background: transparent;
     width: 180px;
+    color: black;
 }
 
 /* ===== TABLE ===== */
@@ -141,6 +142,9 @@
     border-radius: 6px;
     font-weight: 700;
     cursor: pointer;
+}
+.btn-export {
+    color: #27ae60;
 }
 
 .btn-secondary {

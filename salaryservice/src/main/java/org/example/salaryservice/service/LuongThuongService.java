@@ -56,7 +56,7 @@ public class LuongThuongService {
 
     @Transactional
     public void tinhLuongDongLoat(Integer thang, Integer nam, String authorizationHeader) {
-        String url = "http://localhost:8081/api/nhan-vien";
+        String url = "http://localhost:8086/api/nhan-vien";
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.AUTHORIZATION, authorizationHeader);
 
@@ -74,32 +74,39 @@ public class LuongThuongService {
 
         for (NhanVienDTO nv : nhanViens) {
             String maNV = nv.getMaNhanVien();
-
-            if (repository.existsByMaNhanVienAndThangAndNamAndLoaiPhieu(maNV, thang, nam, "LUONG")) {
-                continue;
-            }
-
+            // 1. Lấy tất cả chấm công
             List<ChamCong> listCCInMonth = chamCongRepo.findByMaNhanVienAndThangAndNam(maNV, thang, nam);
-            if (listCCInMonth.isEmpty()) {
-                continue;
-            }
-
+            if (listCCInMonth.isEmpty()) continue;
             double tongGioLam = listCCInMonth.stream()
                     .mapToDouble(cc -> cc.getSoGioLam() != null ? cc.getSoGioLam() : 0.0)
                     .sum();
 
             double mucLuong = nv.getTienLuong() != null ? nv.getTienLuong().doubleValue() : 30000.0;
+            // 2. Tìm phiếu cũ
+            List<LuongThuong> existingRecords = repository.findByMaNhanVienAndThangAndNam(maNV, thang, nam);
+            LuongThuong lt = existingRecords.stream()
+                    .filter(r -> "LUONG".equalsIgnoreCase(r.getLoaiPhieu()))
+                    .findFirst()
+                    .orElse(new LuongThuong());
 
-            LuongThuong lt = new LuongThuong();
-            lt.setMaPhieu("PL" + (System.nanoTime() % 10000000));
-            lt.setMaNhanVien(maNV);
-            lt.setLoaiPhieu("LUONG");
+            // 3. Kiểm tra trạng thái: Nếu đã thanh toán thì TUYỆT ĐỐI không tính lại
+            if ("Đã thanh toán".equals(lt.getTrangThaiLuong())) {
+                continue;
+            }
+            // 4. Thiết lập thông tin
+            if (lt.getMaPhieu() == null) {
+                // Chỉ set các thông tin này cho PHIẾU MỚI
+                lt.setMaPhieu("PL" + (System.nanoTime() % 10000000));
+                lt.setNgayTao(LocalDateTime.now());
+                lt.setMaNhanVien(maNV);
+                lt.setLoaiPhieu("LUONG");
+                lt.setThang(thang);
+                lt.setNam(nam);
+            }
+            // Cập nhật các giá trị có thể thay đổi (Số giờ, số tiền)
             lt.setSoGioLam(tongGioLam);
             lt.setSoTien(tongGioLam * mucLuong);
-            lt.setThang(thang);
-            lt.setNam(nam);
             lt.setTrangThaiLuong("Chưa thanh toán");
-            lt.setNgayTao(LocalDateTime.now());
 
             repository.save(lt);
         }

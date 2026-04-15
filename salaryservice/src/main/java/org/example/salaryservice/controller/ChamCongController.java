@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/cham-cong")
@@ -81,4 +82,37 @@ public class ChamCongController {
                 chamCongService.getHistoryByMonth(maNV, month, year)
         );
     }
+    @PutMapping("/fix-ca-loi")
+    public ResponseEntity<?> fixCaLoi(@RequestBody Map<String, Object> payload) {
+        try {
+            String maNV = Objects.toString(payload.get("maNV"), "").trim();
+            if (maNV.isEmpty()) {
+                return ResponseEntity.badRequest().body("Thiếu mã nhân viên");
+            }
+
+            int d = parseInt(payload.get("day"), "day");
+            int m = parseInt(payload.get("month"), "month");
+            int y = parseInt(payload.get("year"), "year");
+            String gioRa = Objects.toString(payload.get("gioRaMoi"), "").trim();
+            if (gioRa.isEmpty()) {
+                return ResponseEntity.badRequest().body("Thiếu giờ ra mới");
+            }
+
+            return ResponseEntity.ok(chamCongService.fixCaLoi(maNV, d, m, y, gioRa));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    private int parseInt(Object value, String fieldName) {
+        if (value instanceof Number) {
+            return ((Number) value).intValue();
+        }
+        if (value instanceof String stringValue && !stringValue.isBlank()) {
+            return Integer.parseInt(stringValue);
+        }
+        throw new IllegalArgumentException("Thiếu hoặc không hợp lệ trường " + fieldName);
+    }
+
+
 }

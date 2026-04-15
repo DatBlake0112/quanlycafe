@@ -41,7 +41,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/salary/**").hasAnyRole("ADMIN","STAFF") // Chỉ ADMIN
+                        .requestMatchers("/api/salary/**").permitAll()// Chỉ ADMIN
                         .requestMatchers("/api/cham-cong/**").permitAll()
                         .anyRequest().authenticated()
                 );

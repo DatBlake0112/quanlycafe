@@ -28,26 +28,35 @@ public interface ChamCongRepository extends JpaRepository<ChamCong, String> {
     // Bạn có thể dùng Query để lấy theo tháng/năm từ thoiGianVao
     @Query("SELECT c FROM ChamCong c WHERE c.maNhanVien = ?1 AND MONTH(c.thoiGianVao) = ?2 AND YEAR(c.thoiGianVao) = ?3")
     List<ChamCong> findByMaNhanVienAndThangAndNam(String maNV, Integer thang, Integer nam);
-    @Query(value = "SELECT DAY(thoiGianVao) as day, " +
-            "SUM(DATEDIFF(SECOND, thoiGianVao, thoiGianRa)) / 3600.0 as totalHours " +
-            "FROM ChamCong  " +
+    @Query(value = "SELECT " +
+            "DAY(thoiGianVao) AS day, " +
+            "CAST(SUM(soGioLam) AS DECIMAL(10,2)) AS totalHours, " +
+            "COUNT(maChamCong) AS countRecords, " +
+            "SUM(CASE WHEN trangThai = N'Lỗi ca' THEN 1 ELSE 0 END) AS errorCount " +
+            "FROM ChamCong " +
             "WHERE maNhanVien = :maNV " +
             "AND MONTH(thoiGianVao) = :month " +
             "AND YEAR(thoiGianVao) = :year " +
-            "AND trangThai = 'Hoàn thành' " +
-            "GROUP BY DAY(thoiGianVao)", nativeQuery = true)
+            "GROUP BY DAY(thoiGianVao)",
+            nativeQuery = true)
     List<Map<String, Object>> findActiveDaysWithHours(
             @Param("maNV") String maNV,
             @Param("month") int month,
             @Param("year") int year);
-    @Query("SELECT cc FROM ChamCong cc " +
-            "WHERE cc.maNhanVien = :maNV " +
-            "AND MONTH(cc.thoiGianVao) = :month " +
-            "AND YEAR(cc.thoiGianVao) = :year " +
+    @Query("SELECT cc FROM ChamCong cc WHERE cc.maNhanVien = :maNV " +
+            "AND MONTH(cc.thoiGianVao) = :month AND YEAR(cc.thoiGianVao) = :year " +
             "ORDER BY cc.thoiGianVao ASC")
-    List<ChamCong> findByMonth(
-            @Param("maNV") String maNV,
-            @Param("month") int month,
-            @Param("year") int year
+    List<ChamCong> findByMonth(@Param("maNV") String maNV, @Param("month") int month, @Param("year") int year
     );
+    @Query("SELECT c FROM ChamCong c WHERE c.maNhanVien = :maNV " +
+            "AND DAY(c.thoiGianVao) = :day " +
+            "AND MONTH(c.thoiGianVao) = :month " +
+            "AND YEAR(c.thoiGianVao) = :year " +
+            "AND c.trangThai LIKE %:status%")
+    Optional<ChamCong> findErrorShift(@Param("maNV") String maNV,
+                                      @Param("day") int day,
+                                      @Param("month") int month,
+                                      @Param("year") int year,
+                                      @Param("status") String status);
+    boolean existsByMaNhanVien(String maNhanVien);
 }

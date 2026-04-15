@@ -13,7 +13,7 @@ export default function ForgotPassword() {
 
     const handleSendOTP = async () => {
         try {
-            const res = await fetch("http://localhost:8081/api/auth/forgot", {
+            const res = await fetch("http://localhost:8086/api/auth/forgot", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email })
@@ -25,7 +25,7 @@ export default function ForgotPassword() {
 
     const handleVerifyOTP = async () => {
         try {
-            const res = await fetch("http://localhost:8081/api/auth/verify-otp", {
+            const res = await fetch("http://localhost:8086/api/auth/verify-otp", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, otp: parseInt(otp) })
@@ -41,7 +41,7 @@ export default function ForgotPassword() {
             return;
         }
         try {
-            const res = await fetch("http://localhost:8081/api/auth/reset", {
+            const res = await fetch("http://localhost:8086/api/auth/reset", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, otp: parseInt(otp), newPassword: password })

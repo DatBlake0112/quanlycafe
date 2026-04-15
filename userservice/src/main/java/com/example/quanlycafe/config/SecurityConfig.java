@@ -48,11 +48,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers("/api/auth/register").hasRole("ADMIN")
-                        .requestMatchers("/api/auth/change-password").authenticated()
+                        .requestMatchers("/api/auth/register").permitAll()
+                        .requestMatchers("/api/auth/change-password").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/nhan-vien/me").hasAnyRole("STAFF", "ADMIN")
-                        .requestMatchers("/api/nhan-vien/**").hasAnyRole("ADMIN","STAFF")
+                        .requestMatchers("/api/nhan-vien/me").authenticated()
+                        .requestMatchers("/api/nhan-vien/**").permitAll()
                         .anyRequest().authenticated()
                 );
 

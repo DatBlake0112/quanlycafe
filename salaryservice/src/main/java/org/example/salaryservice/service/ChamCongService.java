@@ -7,11 +7,11 @@ import org.example.salaryservice.repository.ChamCongRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -19,76 +19,102 @@ public class ChamCongService {
     private final ChamCongRepository repo;
 
     public Optional<ChamCong> layCaDangLam(String maNV) {
-        return repo.findByMaNhanVienAndTrangThai(maNV, "Đang làm");
+        return repo.findByMaNhanVienAndTrangThai(maNV, "Đang làm")
+                .filter(cc -> Duration.between(cc.getThoiGianVao(), LocalDateTime.now()).toHours() < 12);
     }
 
     @Transactional
     public ChamCong thucHienChamCong(String maNV) {
-        return repo.findByMaNhanVienAndTrangThai(maNV, "Đang làm")
-                .map(this::checkOut)
-                .orElseGet(() -> checkIn(maNV));
+        Optional<ChamCong> caDangLam = repo.findByMaNhanVienAndTrangThai(maNV, "Đang làm");
+
+        if (caDangLam.isPresent()) {
+            ChamCong cc = caDangLam.get();
+            // Nếu quên tan ca (quá 12h), đóng ca lỗi và mở ca mới
+            if (Duration.between(cc.getThoiGianVao(), LocalDateTime.now()).toHours() >= 12) {
+                cc.setTrangThai("Lỗi ca");
+                cc.setThoiGianRa(cc.getThoiGianVao());
+                cc.setSoGioLam(0.0);
+                repo.save(cc);
+                return checkIn(maNV);
+            }
+            return checkOut(cc);
+        }
+        return checkIn(maNV);
     }
 
     private ChamCong checkIn(String maNV) {
-        LocalDateTime now = LocalDateTime.now();
-        int hour = now.getHour();
+        ZonedDateTime nowZoned = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+        LocalDateTime now = nowZoned.toLocalDateTime();
+        int hour = nowZoned.getHour();
         String prefix;
 
-        // 1. Phân loại ca làm việc dựa trên giờ vào
         if (hour >= 6 && hour < 12) {
-            prefix = "S"; // Ca Sáng
+            prefix = "S";
         } else if (hour >= 12 && hour < 18) {
-            prefix = "C"; // Ca Chiều
-        } else if (hour >= 18 && hour < 22) {
-            prefix = "T"; // Ca Tối
+            prefix = "C";
+        } else if (hour >= 18 && hour < 23) {
+            prefix = "T";
         } else {
-            // 2. Chặn ca đêm (22h đêm đến 6h sáng hôm sau)
-            throw new RuntimeException("Ngoài giờ làm việc! Hệ thống không cho phép chấm công từ 22h đêm đến 6h sáng.");
+            throw new RuntimeException("Hệ thống chỉ cho phép vào ca từ 06:00 đến 23:00!");
         }
 
-        // 3. Tạo mã ca theo motip: [Prefix][ddMMyyyy] -> VD: C08042026
-        String maCaTuDong = prefix + now.format(DateTimeFormatter.ofPattern("ddMMyyyy"));
-
         ChamCong cc = new ChamCong();
-        cc.setMaChamCong("CC" + System.currentTimeMillis() % 100000);
+        cc.setMaChamCong("CC-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         cc.setMaNhanVien(maNV);
-        cc.setMaCa(maCaTuDong); // Gán mã ca tự động sinh ra
+        cc.setMaCa(prefix + now.format(DateTimeFormatter.ofPattern("ddMMyy")));
         cc.setThoiGianVao(now);
         cc.setTrangThai("Đang làm");
         return repo.save(cc);
     }
 
     private ChamCong checkOut(ChamCong cc) {
-        cc.setThoiGianRa(LocalDateTime.now());
+        cc.setThoiGianRa(LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
         cc.setTrangThai("Hoàn thành");
-        if (cc.getThoiGianVao() != null) {
-            long mins = Duration.between(cc.getThoiGianVao(), cc.getThoiGianRa()).toMinutes();
-            // Tính số giờ và làm tròn đến 2 chữ số thập phân
-            double hours = mins / 60.0;
-            cc.setSoGioLam(Math.round(hours * 100.0) / 100.0);
-        }
+        double hours = Duration.between(cc.getThoiGianVao(), cc.getThoiGianRa()).getSeconds() / 3600.0;
+        cc.setSoGioLam(Math.round(hours * 100.0) / 100.0);
         return repo.save(cc);
     }
 
-    public Double getTongGioLamTheoThang(String maNV, int thang, int nam) {
-        Double tong = repo.sumSoGioLamByMonth(maNV, thang, nam);
-        return (tong != null) ? tong : 0.0;
-    }
     public List<ChamCongDTO> getHistoryByMonth(String maNV, int month, int year) {
         return repo.findByMonth(maNV, month, year)
                 .stream()
                 .map(cc -> new ChamCongDTO(
-                        // 👉 Lấy ngày từ thoiGianVao
                         cc.getThoiGianVao().toLocalDate().toString(),
-                        // 👉 Giờ vào
-                        cc.getThoiGianVao().toLocalTime().toString(),
-                        // 👉 Giờ ra (có thể null)
-                        cc.getThoiGianRa() != null
-                                ? cc.getThoiGianRa().toLocalTime().toString()
-                                : "--",
-                        // 👉 Số giờ
+                        cc.getThoiGianVao().toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")),
+                        cc.getThoiGianRa() != null ? cc.getThoiGianRa().toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")) : "--",
                         cc.getSoGioLam() != null ? cc.getSoGioLam() : 0
                 ))
                 .toList();
+    }
+    @Transactional
+    public ChamCong fixCaLoi(String maNV, int d, int m, int y, String gioRaMoi) {
+        // 1. Tìm bản ghi "Lỗi ca" bằng cách truyền chuỗi từ Java xuống để tránh lỗi Encoding Tiếng Việt
+        // Dùng LIKE trong Repository nếu cần thiết
+        ChamCong cc = repo.findErrorShift(maNV, d, m, y, "Lỗi ca")
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy bản ghi 'Lỗi ca' nào cho ngày " + d + "/" + m + " trong hệ thống!"));
+
+        // 2. Chuyển "HH:mm" từ React gửi lên thành LocalDateTime
+        // Sử dụng Formatter để đảm bảo an toàn
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime timeRa = LocalTime.parse(gioRaMoi, timeFormatter);
+
+        // Giờ ra phải đi cùng ngày với giờ vào của ca đó
+        LocalDateTime dateTimeRa = LocalDateTime.of(cc.getThoiGianVao().toLocalDate(), timeRa);
+
+        // 3. Kiểm tra logic thời gian
+        if (dateTimeRa.isBefore(cc.getThoiGianVao())) {
+            throw new RuntimeException("Giờ ra (" + gioRaMoi + ") không được sớm hơn giờ vào (" +
+                    cc.getThoiGianVao().format(DateTimeFormatter.ofPattern("HH:mm")) + ")!");
+        }
+
+        // 4. Cập nhật thông tin
+        cc.setThoiGianRa(dateTimeRa);
+        cc.setTrangThai("Hoàn thành");
+
+        // Tính lại số giờ làm
+        double hours = Duration.between(cc.getThoiGianVao(), dateTimeRa).getSeconds() / 3600.0;
+        cc.setSoGioLam(Math.round(hours * 100.0) / 100.0);
+
+        return repo.save(cc);
     }
 }
