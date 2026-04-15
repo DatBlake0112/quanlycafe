@@ -1,6 +1,7 @@
 package org.example.salaryservice.service;
 
 import jakarta.transaction.Transactional;
+import org.example.salaryservice.client.NotificationClient;
 import org.example.salaryservice.dto.NhanVienDTO;
 import org.example.salaryservice.entity.ChamCong;
 import org.example.salaryservice.entity.LuongThuong;
@@ -22,6 +23,8 @@ public class LuongThuongService {
 
     @Autowired
     private LuongThuongRepository repository;
+    @Autowired
+    private NotificationClient notificationClient;
 
     @Autowired
     private ChamCongRepository chamCongRepo;
@@ -43,7 +46,28 @@ public class LuongThuongService {
         if (!"LUONG".equalsIgnoreCase(req.getLoaiPhieu())) {
             req.setSoGioLam(0.0);
         }
-        return repository.save(req);
+        LuongThuong saved = repository.save(req);
+        // 🔔 GỬI NOTIFICATION
+        String tieuDe;
+        String noiDung;
+
+        if ("THUONG".equalsIgnoreCase(req.getLoaiPhieu())) {
+            tieuDe = "Thưởng";
+            noiDung = "Bạn được thưởng " + req.getSoTien() + " VNĐ";
+        } else {
+            tieuDe = "Phạt";
+            noiDung = "Bạn bị phạt " + req.getSoTien() + " VNĐ";
+        }
+
+        notificationClient.send(
+                req.getMaNhanVien(),
+                tieuDe,
+                noiDung,
+                req.getLoaiPhieu(),
+                req.getMaPhieu()
+        );
+
+        return saved;
     }
 
     public void updatePaymentStatus(String maNV, Integer t, Integer n) {
@@ -118,6 +142,26 @@ public class LuongThuongService {
         }
         adjustment.setNgayTao(LocalDateTime.now());
         adjustment.setTrangThaiLuong("Chưa thanh toán");
-        return repository.save(adjustment);
+        LuongThuong saved = repository.save(adjustment);
+        // 🔔 GỬI NOTIFICATION
+        String tieuDe;
+        String noiDung;
+
+        if ("THUONG".equalsIgnoreCase(adjustment.getLoaiPhieu())) {
+            tieuDe = "Thưởng";
+            noiDung = "Bạn được thưởng " + adjustment.getSoTien() + " VNĐ";
+        } else {
+            tieuDe = "Phạt";
+            noiDung = "Bạn bị phạt " + adjustment.getSoTien() + " VNĐ";
+        }
+
+        notificationClient.send(
+                adjustment.getMaNhanVien(),
+                tieuDe,
+                noiDung,
+                adjustment.getLoaiPhieu(),
+                adjustment.getMaPhieu()
+        );
+        return saved;
     }
 }

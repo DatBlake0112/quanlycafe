@@ -25,19 +25,20 @@ function Login() {
             alert("Sai tài khoản hoặc mật khẩu!");
         }
     };
+
     return (
         <div className="portal-container">
             <div className="portal-hero-section">
                 <div className="hero-overlay">
                     <div className="hero-content">
                         <span className="brand-label">LADO COFFEE SYSTEM</span>
-                        {/* Tách riêng thẻ h1 và dùng thẻ div bao ngoài để tránh lỗi chồng chữ */}
                         <div className="hero-title-wrapper">
                             <h1 className="hero-title">Hệ thống quản lý</h1>
                             <h1 className="hero-title highlight">vận hành cửa hàng</h1>
                         </div>
                         <p className="hero-description">
-                            Nền tảng quản trị thông minh giúp theo dõi doanh thu </p><br/>
+                            Nền tảng quản trị thông minh giúp theo dõi doanh thu
+                        </p><br/>
                         <p> quản lý kho và tối ưu quy trình phục vụ.</p>
                     </div>
                     <div className="hero-footer">
@@ -53,45 +54,56 @@ function Login() {
                 </div>
 
                 <div className="form-wrapper">
-                    <div className="welcome-text-group">
-                        <h2 className="form-welcome">Chào mừng trở lại</h2>
-                        <p className="form-subtitle">Vui lòng đăng nhập hệ thống Lado Coffee</p>
-                    </div>
-
-                    <div className="input-field">
-                        <label>Tên đăng nhập / Email</label>
-                        <div className="input-icon-wrapper">
-                            <span className="input-icon">👤</span>
-                            <input
-                                type="text"
-                                placeholder="Nhập tài khoản"
-                                value={tenDangNhap}
-                                onChange={(e) => setTenDangNhap(e.target.value)}
-                            />
+                    <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
+                        <div className="welcome-text-group">
+                            <h2 className="form-welcome">Chào mừng trở lại</h2>
+                            <p className="form-subtitle">Vui lòng đăng nhập hệ thống Lado Coffee</p>
                         </div>
-                    </div>
 
-                    <div className="input-field">
-                        <label>Mật khẩu</label>
-                        <div className="input-icon-wrapper">
-                            <span className="input-icon">🔒</span>
-                            <input type={showPassword ? "text" : "password"} placeholder="Nhập mật khẩu" value={matKhau} onChange={(e) => setMatKhau(e.target.value)} />
-                            <span className="eye-toggle" onClick={() => setShowPassword(!showPassword)}>{showPassword ? "👁️" : "🙈"}</span>
+                        <div className="input-field">
+                            <label>Tên đăng nhập / Email</label>
+                            <div className="input-icon-wrapper">
+                                <span className="input-icon">👤</span>
+                                <input
+                                    type="text"
+                                    placeholder="Nhập tài khoản"
+                                    value={tenDangNhap}
+                                    onChange={(e) => setTenDangNhap(e.target.value)}
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="form-options">
-                        <label className="remember-me"><input type="checkbox" /> Ghi nhớ</label>
-                        <span className="link" onClick={() => navigate("/register")}>Đăng ký?</span>
-                        <span className="link" onClick={() => navigate("/forgot")}>Quên mật khẩu?</span>
-                    </div>
+                        <div className="input-field">
+                            <label>Mật khẩu</label>
+                            <div className="input-icon-wrapper">
+                                <span className="input-icon">🔒</span>
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Nhập mật khẩu"
+                                    value={matKhau}
+                                    onChange={(e) => setMatKhau(e.target.value)}
+                                />
+                                <span className="eye-toggle" onClick={() => setShowPassword(!showPassword)}>
+                                    {showPassword ? "👁️" : "🙈"}
+                                </span>
+                            </div>
+                        </div>
 
-                    <button className="btn-portal-submit" onClick={handleLogin}>ĐĂNG NHẬP HỆ THỐNG</button>
+                        <div className="form-options">
+                            <label className="remember-me"><input type="checkbox" /> Ghi nhớ</label>
+                            <span className="link" onClick={() => navigate("/register")}>Đăng ký?</span>
+                            <span className="link" onClick={() => navigate("/forgot")}>Quên mật khẩu?</span>
+                        </div>
 
-                    <div className="form-footer-actions">
-                        <button className="btn-outline">📖 Hướng dẫn</button>
-                        <button className="btn-outline">🎧 Liên hệ Admin</button>
-                    </div>
+                        <button type="submit" className="btn-portal-submit">
+                            ĐĂNG NHẬP HỆ THỐNG
+                        </button>
+
+                        <div className="form-footer-actions">
+                            <button type="button" className="btn-outline">📖 Hướng dẫn</button>
+                            <button type="button" className="btn-outline">🎧 Liên hệ Admin</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

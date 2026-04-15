@@ -1,11 +1,13 @@
 package com.example.quanlycafe.service;
 
 import com.example.quanlycafe.dto.RegisterRequest;
+import com.example.quanlycafe.email.EmailService;
 import com.example.quanlycafe.entity.NhanVien;
 import com.example.quanlycafe.entity.TaiKhoan;
 import com.example.quanlycafe.repository.NhanVienRepository;
 import com.example.quanlycafe.repository.TaiKhoanRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final IdGeneratorService idGenerator;
+    @Autowired
+    private EmailService emailService;
 
     /**
      * LOGIC REGISTER: Tạo Thương hiệu -> Tạo Nhân viên Quản lý -> Tạo Tài khoản Admin
@@ -99,10 +103,10 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("Email không tồn tại trong hệ thống"));
 
         int otp = (int)(Math.random() * 900000) + 100000;
+
         tk.setOTP(otp);
         taiKhoanRepository.save(tk);
-
-        System.out.println(">>> MÃ OTP CỦA BẠN LÀ: " + otp);
+        emailService.sendOtp(email, String.valueOf(otp));
         return "Mã OTP đã được gửi đến email của bạn.";
     }
     @Transactional
